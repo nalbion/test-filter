@@ -1,10 +1,21 @@
 // jasmine env.specFilter = require('test-filter').jasmineSpecFilter;
 
-module.export
+// var test_filter = require('test-filter');
+// test_filter();
+module.exports = function () {
 
-jasmineSpecFilter = function() {
-      return true;
-    };
+};
+
+// var jasmineSpecFilter = require('test-filter').jasmineSpecFilter;
+// jasmineSpecFilter();
+/** Called from Jasmine to check if each spec should be executed */
+exports.jasmineSpecFilter = function () {
+    return true;
+};
+
+
+
+
 	
 /* jasmine reporter events: 
 'jasmineStarted',

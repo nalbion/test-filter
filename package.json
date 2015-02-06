@@ -1,0 +1,34 @@
+{
+  "name": "test-filter",
+  "version": "0.0.1",
+  "description": "Filter which tests are executed by integrating issue management systems",
+  "keywords": [
+    "test",
+    "jasmine",
+    "protractor",
+    "cucumber",
+    "jira",
+    "github",
+    "issues"
+  ],
+  "author": "Nicholas Albion",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nalbion/test-filter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nalbion/test-filter/issues"
+  },
+  "devDependencies": {
+    "gulp": "~3.8.10"
+  },
+  "dependencies": {
+    "jasmine": "~2.2.0",
+    "github": "~0.2.3",
+    "underscore": "~1.7.0"
+  }
+}
