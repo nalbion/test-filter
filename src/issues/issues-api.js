@@ -43,7 +43,7 @@ IssuesApiFactory.prototype.getIssuesApi = function (config) {
         var bugsUrl, pkg = require(appRoot + '/package.json');
         if (undefined !== pkg && undefined !== pkg.bugs && undefined !== pkg.bugs.url) {
             bugsUrl = pkg.bugs.url;
-        } els if( config && config.host ) {
+        } else if( config && config.host ) {
             bugsUrl = config.host;
         }
         system = this.parseSystem(bugsUrl);
