@@ -17,5 +17,5 @@
 
 // PUBLISH DI MODULE for Karma
 module.exports = {
-  'preprocessor:html2js': ['factory', require('./html2js')]
+  'preprocessor:test-filter': ['factory', require('./karma-test-filter-preprocessor')]
 };

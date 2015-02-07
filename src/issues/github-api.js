@@ -1,10 +1,10 @@
 var _ = require('underscore');
-var GitHubApi = require('github');
-var package = require('../package.json');
+var NodeGitHubApi = require('github');
+var pkg = require('../../package.json');
 
-// var GitHubReader = require('../src/github-reader.js');
-// var gitHubReader = new GitHubReader({host: "github.my-GHE-enabled-company.com"});
-// githubReader.repoIssues({}. function(err, data){});
+// var GitHubApi = require('../src/github-api.js');
+// var gitHub = new GitHubReader({host: "github.my-GHE-enabled-company.com"});
+// github.repoIssues({}. function(err, data){});
 
 
 /**
@@ -13,7 +13,7 @@ var package = require('../package.json');
   *      timeout: number=, headers: Object.<string, string>=}=} options
  * @constructor
  */
-var GitHubReader = function(options) {
+var GitHubApi = function(options) {
     options = _.extend({
         // required
         version: "3.0.0",
@@ -24,11 +24,13 @@ var GitHubReader = function(options) {
         //pathPrefix: "/api/v3", // for some GHEs
         timeout: 5000,
         headers: {
-            "user-agent": package.name + "-" + package.version
+            "user-agent": pkg.name + "-" + pkg.version
         }
     }, options);
 
-    this.github = new GitHubApi(options);
+    this.repo = options.repo;
+    this.group = options.group;
+    this.github = new NodeGitHubApi(options);
 };
 
 /**
@@ -47,7 +49,11 @@ var GitHubReader = function(options) {
  page (Number): Optional. Page number of the results to fetch. Validation rule: ^[0-9]+$.
  per_page (Number): Optional. A custom page size up to 100. Default is 30. Validation rule: ^[0-9]+$.
  */
-GitHubReader.prototype.repoIssues = function (options, callback) {
+GitHubApi.prototype.getIssues = function (options, callback) {
+    options = _.extend({
+        user: this.group,
+        repo: this.repo
+    }, options);
     return this.github.issues.repoIssues(options, function (error, data) {
         var issues = _.map(data, function(record) {
             issue = {
@@ -90,4 +96,4 @@ GitHubReader.prototype.repoIssues = function (options, callback) {
 //})
 
 
-module.exports = GitHubReader;
+module.exports = GitHubApi;

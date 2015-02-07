@@ -1,8 +1,7 @@
-var GitHubReader = require('../src/github-reader.js');
-var gitHubReader = new GitHubReader();
+var GitHubApi = require('../src/issues/github-api.js');
+var gitHub = new GitHubApi();
 //var JasmineSpecParser = require('../src/jasmine/spec-parser.js');
 //var jasmineSpecParser = new JasmineSpecParser('spec/**/*-spec.js');
-
 
 
 xdescribe('skipped feature', function () {
@@ -35,9 +34,9 @@ describe('jasmine preprocessor', function () {
         var error, issues;
 
         beforeEach(function (done) {
-            //jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
-            gitHubReader.repoIssues({
+            gitHub.repoIssues({
                 user: 'nalbion',
                 repo: 'test-filter'
             }, function (response_error, response_data) {
