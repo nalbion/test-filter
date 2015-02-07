@@ -14,3 +14,8 @@
 //// var testFilter = new TestFilter();
 //// testFilter.bla();
 //exports.TestFilter = TestFilter;
+
+// PUBLISH DI MODULE for Karma
+module.exports = {
+  'preprocessor:html2js': ['factory', require('./html2js')]
+};

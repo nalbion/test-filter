@@ -4,8 +4,12 @@
   "description": "Filter which tests are executed by integrating issue management systems",
   "keywords": [
     "test",
+    "tdd",
+    "bdd",
     "jasmine",
     "protractor",
+    "karma-plugin",
+    "karma-preprocessor",
     "cucumber",
     "jira",
     "github",
@@ -14,6 +18,8 @@
   "author": "Nicholas Albion",
   "main": "src/index.js",
   "scripts": {
+    "jasmine": "jasmine",,
+    "karma": "karma start",
     "test": "gulp test"
   },
   "repository": {
@@ -24,7 +30,9 @@
     "url": "https://github.com/nalbion/test-filter/issues"
   },
   "devDependencies": {
-    "gulp": "~3.8.10"
+    "gulp": "~3.8.10",
+    "karma": "^0.12.17",
+    "karma-jasmine": "^0.2.2"
   },
   "dependencies": {
     "jasmine": "~2.2.0",
