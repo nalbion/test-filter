@@ -1,5 +1,5 @@
 var util = require('util');
-var issuesApiFactory = require('../src/issues/issues-api.js');
+var issuesApiFactory = require('../../issues/issues-api.js');
 
 /**
  * Factory method to create a pre-processor function
