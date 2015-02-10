@@ -27,11 +27,9 @@
 var appRoot = require('app-root-path');
 
 var IssuesApiFactory = function () {
-
 };
 
 /**
- *
  * @param {Object=} config
  */
 IssuesApiFactory.prototype.getIssuesApi = function (config) {

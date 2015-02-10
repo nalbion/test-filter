@@ -1,6 +1,7 @@
 var GitHubApi = require('../src/issues/github-api.js');
 var gitHub = new GitHubApi();
-//var JasmineSpecParser = require('../src/jasmine/spec-parser.js');
+var _ = require('underscore');
+var jasminePreprocess = require('../src/parsers/jasmine-parser.js').preprocess;
 //var jasmineSpecParser = new JasmineSpecParser('spec/**/*-spec.js');
 
 
@@ -20,6 +21,30 @@ describe('jasmine preprocessor', function () {
         it('should parse annotations in spec files', function () {
             //var specs = jasmineSpecParser.parseSpecs();
             //expect(specs['jasmine preprocessor'])
+
+            var inlineJavaDoc = '/** @issue ABC_123 ABC_456 */\n' +
+                                'describe("inline javadoc", function () {\n' +
+                                '  /** @issue ABC_789 */\n' +
+                                '  describe(\'with nested describes\', function () {\n' +
+                                '  /** @issue ABC_987 ABC_654 */\n' +
+                                '    it("should process its also", function() {\n' +
+                                '}) }) })';
+
+            var multilineJavaDoc = '/**\n' +
+                                ' * @issue ABC_123 ABC_456\n' +
+                                ' */\n' +
+                                'describe("multi-line javadoc", function () {\n' +
+                                '  /** \n' +
+                                '   * @issue ABC_789' +
+                                '   */\n' +
+                                '  describe(\'with nested describes\', function () {\n' +
+                                '    /**\n' +
+                                '     * @issue ABC_987 ABC_654' +
+                                '     */\n' +
+                                '    it("should process its also", function() {\n' +
+                                '}) }) })';
+
+            jasminePreprocess(inlineJavaDoc, issues)
         });
     });
 
@@ -36,7 +61,7 @@ describe('jasmine preprocessor', function () {
         beforeEach(function (done) {
             jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
-            gitHub.repoIssues({
+            gitHub.getIssues({
                 user: 'nalbion',
                 repo: 'test-filter'
             }, function (response_error, response_data) {
@@ -50,7 +75,7 @@ describe('jasmine preprocessor', function () {
         it('should download issue data from the server', function () {
             expect(error).toBeNull();
             expect(issues).toBeDefined();
-            expect(issues.length).toBeGreaterThan(5);
+            expect(_.keys(issues).length).toBeGreaterThan(5);
         });
 
         ///** @issue 1 */

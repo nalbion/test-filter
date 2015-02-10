@@ -40,6 +40,7 @@
     "jasmine": "~2.2.0",
     "github": "~0.2.3",
     "underscore": "~1.7.0",
-    "app-root-path": "~1.0.0"
+    "app-root-path": "~1.0.0",
+    "semver": "~4.2.2"
   }
 }
