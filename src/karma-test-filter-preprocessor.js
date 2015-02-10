@@ -37,24 +37,19 @@ var createTestFilterPreprocessor = function(logger, basePath, frameworks, testFi
     // Karma only supports one test framework per config file, but it is valid to have more than
     // one framework (eg: ['jasmine', 'requirejs'])
     var framework = _.intersection(['jasmine', 'cucumber', 'mocha', 'qunit'], frameworks)[0];
-
+    var preprocess = require('./parsers/' + framework + '.js').preprocess;
 
     return function(content, file, done) {
         log.info('Processing "%s".', file.originalPath);
         log.info(typeof content);
         log.info(file);
 
-
-
+        var processedTestCase = preprocess(content, issues);
+		done(processedTestCase);
 
         //var htmlPath = file.originalPath.replace(basePath + '/', '');
         //
         //file.path = file.path + '.js';
-        done('describe("replaced", function(){' +
-                'it("should be replaced", function(){' +
-                    'expect(true).toBe(true);' +
-                '})' +
-        '})'); //util.format(TEMPLATE, htmlPath, escapeContent(content)));
     };
 };
 

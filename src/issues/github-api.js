@@ -34,7 +34,7 @@ var GitHubApi = function(options) {
 };
 
 /**
- * @type {function(Object)} - accepts an object with the following fields:
+ * @type {function(Object):Object.<string, Object>} - accepts an object with the following fields:
  headers (Object): Optional. Key/ value pair of request headers to pass along with the HTTP request. Valid headers are: 'If-Modified-Since', 'If-None-Match', 'Cookie', 'User-Agent', 'Accept', 'X-GitHub-OTP'.
  user (String): Required.
  repo (String): Required.
@@ -55,9 +55,10 @@ GitHubApi.prototype.getIssues = function (options, callback) {
         repo: this.repo
     }, options);
     return this.github.issues.repoIssues(options, function (error, data) {
-        var issues = _.map(data, function(record) {
+        //var issues = _.map(data, function(record) {
+		var issues = _.reduce(data, function(issues, record) {	
             issue = {
-                number: record.number,
+                id: record.number,
                 status: record.state,     // 'open', 'closed'
                 reporter: record.user && record.user.login
             };
@@ -75,8 +76,9 @@ GitHubApi.prototype.getIssues = function (options, callback) {
                 issue.release = record.milestone.title;
             };
 
-            return issue;
-        });
+            //return issue;
+			issues[record.number] = issue;
+        }, []);
         callback(error, issues);
     });
 }
