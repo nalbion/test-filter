@@ -3,7 +3,62 @@
 // var test_filter = require('test-filter');
 // test_filter();
 module.exports = function () {
+	
+};
 
+/**
+ * @param input
+ * @param {Object.<string, Object>} issues - 
+ number, status, reporter, assignee, labels, release}}
+ */
+exports.preprocess = function (input, issues) {
+	// scan through the input string
+	// build up maps "describes" and 
+	
+	var pathArray = [],
+	    inComment = false,
+		output = '',
+		status, milestone;
+	
+	for (line in input) {
+		// detect javadoc-style comments
+		// support single-line javadoc comments
+		if (!inComment) {
+			if (line.indexOf('/**') >= 0) {
+				inComment = true;
+				status = milestone = undefined;
+			}
+		}
+		// TODO unit test
+		if (inComment) {
+			var issueAnnotation = /@issue ((?!@|\*\/)+)/.match(line);
+			if (issueAnnotation) {
+				var testIssues = issueAnnotation.split(' ');
+				for (testIssue in testIssues) {
+					testIssue = issues[testIssue];
+					// if multiple status values
+					// go withwith the worst case scenario
+					// ie OPEN
+					status = testIssue.determinePriorityStatus(status);
+		
+					// if multiple milestone values
+					// use the earliest milestone
+					// (to avoid early failures refactor the tests)
+					milestone = testIssue.determinePriorityMilestone(milestone);
+				}
+			}
+			
+			if (line.indexOf('*/') >= 0) {
+				inComment = false;
+			}
+		}
+	}
+	
+    return 'describe("replaced", function(){' +
+            'it("should be replaced", function(){' +
+                    'expect(true).toBe(true);' +
+                '})' +
+        '})'; //util.format(TEMPLATE, htmlPath, escapeContent(content)));
 };
 
 // var jasmineSpecFilter = require('test-filter').jasmineSpecFilter;
