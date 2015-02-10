@@ -1,6 +1,7 @@
 var GitHubApi = require('../src/issues/github-api.js');
 var gitHub = new GitHubApi();
 var _ = require('underscore');
+var fs = require('fs');
 var jasminePreprocess = require('../src/parsers/jasmine-parser.js').preprocess;
 //var jasmineSpecParser = new JasmineSpecParser('spec/**/*-spec.js');
 
@@ -19,32 +20,25 @@ describe('jasmine preprocessor', function () {
     describe('spec parser', function () {
         /** @issue 7 */
         it('should parse annotations in spec files', function () {
-            //var specs = jasmineSpecParser.parseSpecs();
-            //expect(specs['jasmine preprocessor'])
+            var inlineJavaDoc = fs.readFileSync('../test/fixtures/single-line-jasmine-comments.js',
+                                                {encoding: 'utf8'});
+            var multilineJavaDoc = fs.readFileSync('../test/fixtures/multi-line-jasmine-comments.js',
+                                                {encoding: 'utf8'});
 
-            var inlineJavaDoc = '/** @issue ABC_123 ABC_456 */\n' +
-                                'describe("inline javadoc", function () {\n' +
-                                '  /** @issue ABC_789 */\n' +
-                                '  describe(\'with nested describes\', function () {\n' +
-                                '  /** @issue ABC_987 ABC_654 */\n' +
-                                '    it("should process its also", function() {\n' +
-                                '}) }) })';
+            // {id, status, reporter, assignee, labels, release}
+            var issues = {
+                'ABC_123': {status: 'open'},
+                'ABC_456': {status: 'closed', release: '1.0.0'},
+                'ABC_789': {status: 'open', release: '2.0.0'},
+                'ABC_987': {status: 'closed'},
+                'ABC_654': {status: 'closed'}
+            };
 
-            var multilineJavaDoc = '/**\n' +
-                                ' * @issue ABC_123 ABC_456\n' +
-                                ' */\n' +
-                                'describe("multi-line javadoc", function () {\n' +
-                                '  /** \n' +
-                                '   * @issue ABC_789' +
-                                '   */\n' +
-                                '  describe(\'with nested describes\', function () {\n' +
-                                '    /**\n' +
-                                '     * @issue ABC_987 ABC_654' +
-                                '     */\n' +
-                                '    it("should process its also", function() {\n' +
-                                '}) }) })';
+            var output = jasminePreprocess(inlineJavaDoc, issues);
+            fs.writeFileSync('../test/fixtures/expected/single-line-jasmine-comments.js', output);
 
-            jasminePreprocess(inlineJavaDoc, issues)
+            output = jasminePreprocess(multilineJavaDoc, issues);
+            fs.writeFileSync('../test/fixtures/expected/multi-line-jasmine-comments.js', output);
         });
     });
 

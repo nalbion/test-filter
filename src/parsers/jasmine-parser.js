@@ -37,6 +37,7 @@ exports.preprocess = function (input, issues) {
     do {
         end = input.indexOf('\n', start + 1);
         var line = input.substring(start, end);
+        start = end + 1;
 
         // detect javadoc-style comments
         // support single-line javadoc comments
