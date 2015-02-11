@@ -31,13 +31,19 @@ exports.preprocess = function (input, issues) {
     var pathArray = [],
         inComment = false,
         start = 0, end,
-        output = '',
+        output = '', line,
         status, milestone;
 
-    do {
+    while (start >= 0) {
         end = input.indexOf('\n', start + 1);
-        var line = input.substring(start, end);
-        start = end + 1;
+		if (end > 0) {
+			line = input.substring(start, end);
+            start = end + 1;
+		} else {
+			// no EOL on last line
+			line = input.substring(start);
+            start = -1;
+		}
 
         // detect javadoc-style comments
         // support single-line javadoc comments
@@ -67,17 +73,20 @@ exports.preprocess = function (input, issues) {
                 }
             }
 
-            if (line.indexOf('*/') >= 0) {
+			end = line.substring(0, '*/');
+            if (end >= 0) {
                 inComment = false;
+				//line = line.substring(0, end);
             }
-        } else {
-
+			out += line + '\n';
+        } else if (status || milestone) {
+            match = /\s*(?:describe|it)\(?:"((?:[^"]|\\")+)"|'((?:[^']|\\')+)'),\s*function\s*(/.match(line):
+			if (match) 	{
+				// remove the comment closing chars
+				line = line.substring(0, line.length - 3);
+			}
         }
     }
 
-    return 'describe("replaced", function(){' +
-        'it("should be replaced", function(){' +
-        'expect(true).toBe(true);' +
-        '})' +
-        '})'; //util.format(TEMPLATE, htmlPath, escapeContent(content)));
+    return output;
 };
