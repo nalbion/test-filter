@@ -50,6 +50,9 @@ IssuesApiFactory.prototype.getIssuesApi = function (config) {
     if ('github' == system) {
         var GitHubApi = require('./github-api.js');
         api = new GitHubApi(config);
+    } else if ('bitbucket' == system) {
+        var BitBucketApi = require('./bitbucket-api.js');
+        api = new BitBucketApi(config);
     } else {
         throw 'Sorry, ' + system + ' is not currently supported';
     }
@@ -65,6 +68,8 @@ IssuesApiFactory.prototype.getIssuesApi = function (config) {
 IssuesApiFactory.prototype.parseSystem = function(bugsUrl) {
     if (bugsUrl.indexOf('github') > 0) {
         return 'github';
+    } else if (bugsUrl.indexOf('bitbucket') > 0) {
+        return 'bitbucket';
     } else if (bugsUrl.indexOf('jira') > 0) {
         return 'jira';
     };
