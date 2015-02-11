@@ -20,25 +20,29 @@ describe('jasmine preprocessor', function () {
     describe('spec parser', function () {
         /** @issue 7 */
         it('should parse annotations in spec files', function () {
-            var inlineJavaDoc = fs.readFileSync('../test/fixtures/single-line-jasmine-comments.js',
+            var inlineJavaDoc = fs.readFileSync('test/fixtures/single-line-jasmine-comments.js',
                                                 {encoding: 'utf8'});
-            var multilineJavaDoc = fs.readFileSync('../test/fixtures/multi-line-jasmine-comments.js',
+            var multilineJavaDoc = fs.readFileSync('test/fixtures/multi-line-jasmine-comments.js',
                                                 {encoding: 'utf8'});
 
             // {id, status, reporter, assignee, labels, release}
-            var issues = {
-                'ABC_123': {status: 'open'},
-                'ABC_456': {status: 'closed', release: '1.0.0'},
-                'ABC_789': {status: 'open', release: '2.0.0'},
-                'ABC_987': {status: 'closed'},
-                'ABC_654': {status: 'closed'}
-            };
+            var issues = {};
+            gitHub.parseIssue(issues, {number: 'ABC_123', state: 'open'});
+            gitHub.parseIssue(issues, {number: 'ABC_456', state: 'closed', milestone: {title: '1.0.0'}});
+            gitHub.parseIssue(issues, {number: 'ABC_789', state: 'open', milestone: {title: '2.0.0'}});
+            gitHub.parseIssue(issues, {number: 'ABC_987', state: 'closed'});
+            gitHub.parseIssue(issues, {number: 'ABC_654', state: 'closed'});
 
-            var output = jasminePreprocess(inlineJavaDoc, issues);
-            fs.writeFileSync('../test/fixtures/expected/single-line-jasmine-comments.js', output);
+            var outputInline = jasminePreprocess(inlineJavaDoc, issues);
+            //fs.writeFileSync('test/fixtures/expected/single-line-jasmine-comments.js', outputInline);
+            expect(outputInline).toBe(fs.readFileSync('test/fixtures/expected/single-line-jasmine-comments.js',
+                                                        {encoding: 'utf8'}));
 
-            output = jasminePreprocess(multilineJavaDoc, issues);
-            fs.writeFileSync('../test/fixtures/expected/multi-line-jasmine-comments.js', output);
+
+            var outputMultiline = jasminePreprocess(multilineJavaDoc, issues);
+            //fs.writeFileSync('test/fixtures/expected/multi-line-jasmine-comments.js', outputMultiline);
+            expect(outputMultiline).toBe(fs.readFileSync('test/fixtures/expected/multi-line-jasmine-comments.js',
+                                                        {encoding: 'utf8'}));
         });
     });
 

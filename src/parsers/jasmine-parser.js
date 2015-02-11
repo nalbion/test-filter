@@ -28,8 +28,10 @@ exports.preprocess = function (input, issues) {
     // scan through the input string
     // build up maps "describes" and
 
+    var ISSUE_REGEXP = /@issue ([^@(*/)]*)/;
+    var TEST_REGEXP = /(\s*)(?:describe|it)\(\s*(?:"((?:[^"]|\")+)"|'((?:[^']|\')+)')/;
     var pathArray = [],
-        inComment = false,
+        inComment = false, singleLineComment,
         start = 0, end,
         output = '', line,
         status, milestone;
@@ -50,20 +52,21 @@ exports.preprocess = function (input, issues) {
         if (!inComment) {
             if (line.indexOf('/**') >= 0) {
                 inComment = true;
+                singleLineComment = true;
                 status = milestone = undefined;
             }
         }
 
         //support optional -version=0.0.1
         //support optional -issue=ABC_1
-        // TODO unit test
         if (inComment) {
-            var issueAnnotation = /@issue ((?!@|\*\/)+)/.match(line);
+            var issueAnnotation = line.match(ISSUE_REGEXP);
             if (issueAnnotation) {
-                var testIssues = issueAnnotation.split(' ');
-                for (testIssue in testIssues) {
+                var testIssues = issueAnnotation[1].trim().split(' ');
+                for (var i = testIssues.length; i-- != 0;) {
+                    var testIssue = testIssues[i];
                     testIssue = issues[testIssue];
-                    // if multiple status values go withwith the worst case scenario
+                    // if multiple status values go with the worst case scenario
                     // ie OPEN
                     status = testIssue.determinePriorityStatus(status);
 
@@ -73,19 +76,30 @@ exports.preprocess = function (input, issues) {
                 }
             }
 
-			end = line.substring(0, '*/');
+			end = line.indexOf('*/');
             if (end >= 0) {
                 inComment = false;
 				//line = line.substring(0, end);
+            } else {
+                singleLineComment = false;
             }
-			out += line + '\n';
+			//output += line + '\n';
         } else if (status || milestone) {
-            match = /\s*(?:describe|it)\(?:"((?:[^"]|\\")+)"|'((?:[^']|\\')+)'),\s*function\s*(/.match(line):
-			if (match) 	{
+            var match = line.match(TEST_REGEXP);
+			if (match) {
 				// remove the comment closing chars
-				line = line.substring(0, line.length - 3);
+				output = output.substring(0, output.length -
+                                        (singleLineComment ? 3 : (match[1].length + 5)));
+                if (status) {
+                    output += '\n' + match[1] + ' * @status ' + status;
+                }
+                if (milestone) {
+                    output += '\n' + match[1] + ' * @release ' + milestone;
+                }
+                output += '\n' + match[1] + ' */\n';
 			}
         }
+        output += line + '\n';
     }
 
     return output;

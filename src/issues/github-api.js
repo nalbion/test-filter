@@ -92,8 +92,11 @@ GitHubIssue.prototype.determinePriorityStatus = function (status) {
 GitHubIssue.prototype.determinePriorityMilestone = function (milestone) {
     if (undefined === milestone) {
         return this.release;
+    } else if (undefined === this.release) {
+        return milestone;
+    } else {
+        return semver.lte(this.release, milestone) ? this.release : milestone;
     }
-    return semver.lte(this.release, milestone) ? this.release : milestone;
 };
 
 /**
@@ -120,6 +123,10 @@ GitHubApi.prototype.getIssues = function (options, callback) {
 
     var github = this;
 
+    if (undefined === callback) {
+        callback =
+    }
+
     return this.github.issues.repoIssues(options, function (error, data) {
         //var issues = _.map(data, function(record) {
 		var issues = _.reduce(data, github.parseIssue, {});
@@ -128,8 +135,8 @@ GitHubApi.prototype.getIssues = function (options, callback) {
 };
 
 /**
- * @param {Object.<string, GitHubIssue>} issues - indexed by issue ID
- * @param {Object} record
+ * @param {Object.<string, GitHubIssue>} issues - the parsed issue will be added to this object, indexed by issue ID
+ * @param {Object} record - the input from GitHub's API
  */
 GitHubApi.prototype.parseIssue = function (issues, record) {
     var issue = new GitHubIssue(record);
