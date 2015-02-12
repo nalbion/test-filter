@@ -31,6 +31,7 @@ exports.preprocess = function (input, issues, outputFilePath) {
     //var log = logger.create('test-filter.jasmine-parser');
 
     var ISSUE_REGEXP = /@issue ([^@(*/)]*)/;
+    var GENERATED_REGEXP = / \* @(status|release) .*/;
     var TEST_REGEXP = /(\s*)(?:describe|it)\(\s*(?:"((?:[^"]|\")+)"|'((?:[^']|\')+)')/;
     var pathArray = [],
         inComment = false, singleLineComment,
@@ -46,6 +47,9 @@ exports.preprocess = function (input, issues, outputFilePath) {
 		} else {
 			// no EOL on last line
 			line = input.substring(start);
+            if (0 == line.length) {
+                break;
+            }
             start = -1;
 		}
 
@@ -62,6 +66,10 @@ exports.preprocess = function (input, issues, outputFilePath) {
         //support optional -version=0.0.1
         //support optional -issue=ABC_1
         if (inComment) {
+            if (line.match(GENERATED_REGEXP)) {
+                singleLineComment = false;
+                continue;
+            }
             var issueAnnotation = line.match(ISSUE_REGEXP);
             if (issueAnnotation) {
                 var testIssues = issueAnnotation[1].trim().split(' ');
@@ -84,11 +92,9 @@ exports.preprocess = function (input, issues, outputFilePath) {
 			end = line.indexOf('*/');
             if (end >= 0) {
                 inComment = false;
-				//line = line.substring(0, end);
             } else {
                 singleLineComment = false;
             }
-			//output += line + '\n';
         } else if (status || milestone) {
             var match = line.match(TEST_REGEXP);
 			if (match) {

@@ -3,7 +3,9 @@ describe('karma test', function () {
         expect(helloWorld()).toEqual('Hello world!');
     });
 
-    /** @issue 1 */
+    /** @issue 1 
+     * @status open
+     */
     it('should skip open issues"', function () {
         expect('this test').toBe('skipped because the issue is open');
     });
@@ -13,3 +15,9 @@ describe('karma test', function () {
         expect(hello('dude')).toEqual('yet to be determined');
     });
 });
+
+
+
+
+
+
