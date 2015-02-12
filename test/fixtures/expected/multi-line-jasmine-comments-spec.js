@@ -4,7 +4,7 @@
  * @status open
  * @release 1.0.0
  */
-describe("inline javadoc", function () {
+describe("multi-line javadoc", function () {
   /**
    * @issue 3
    * @tag XYZ
@@ -13,7 +13,6 @@ describe("inline javadoc", function () {
    */
   describe('with nested describes', function () {
     /**
-     * @release 2.0.0
      * @issue 4 5
      * @skip
      * @status closed
