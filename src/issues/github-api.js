@@ -136,7 +136,6 @@ GitHubApi.prototype.getIssues = function (options) {
         user: this.group,
         repo: this.repo
     }, options);
-
     var github = this;
     var deferred = q.defer();
 

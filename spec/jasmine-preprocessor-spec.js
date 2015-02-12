@@ -27,11 +27,11 @@ describe('jasmine preprocessor', function () {
 
             // {id, status, reporter, assignee, labels, release}
             var issues = {};
-            gitHub.parseIssue(issues, {number: 'ABC_123', state: 'open'});
-            gitHub.parseIssue(issues, {number: 'ABC_456', state: 'closed', milestone: {title: '1.0.0'}});
-            gitHub.parseIssue(issues, {number: 'ABC_789', state: 'open', milestone: {title: '2.0.0'}});
-            gitHub.parseIssue(issues, {number: 'ABC_987', state: 'closed'});
-            gitHub.parseIssue(issues, {number: 'ABC_654', state: 'closed'});
+            gitHub.parseIssue(issues, {number: '1', state: 'open'});
+            gitHub.parseIssue(issues, {number: '2', state: 'closed', milestone: {title: '1.0.0'}});
+            gitHub.parseIssue(issues, {number: '3', state: 'open', milestone: {title: '2.0.0'}});
+            gitHub.parseIssue(issues, {number: '4', state: 'closed'});
+            gitHub.parseIssue(issues, {number: '5', state: 'closed'});
 
             var outputInline = jasminePreprocess(inlineJavaDoc, issues);
             //fs.writeFileSync('test/fixtures/expected/single-line-jasmine-comments-spec.js', outputInline);
@@ -59,11 +59,13 @@ describe('jasmine preprocessor', function () {
         beforeEach(function (done) {
             jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
+            console.info('get issues from GitHub for test...');
             gitHub.getIssues({
                 user: 'nalbion',
                 repo: 'test-filter'
             }).then(function (response_data) {
                 issues = response_data;
+                error = null;
                 done();
             }, function (response_error) {
                 error = response_error;

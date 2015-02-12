@@ -68,7 +68,7 @@ exports.preprocess = function (input, issues, outputFilePath) {
                 for (var i = testIssues.length; i-- != 0;) {
                     var testIssue = issues[testIssues[i]];
                     if (undefined === testIssue) {
-                        console.warn('Issue not found on server', testIssues[i]);
+                        console.warn('Issue not found on server:', testIssues[i]);
                     } else {
                         // if multiple status values go with the worst case scenario
                         // ie OPEN

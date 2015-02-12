@@ -13,7 +13,7 @@ describe("inline javadoc", function () {
      * @issue 4 5
      * @skip
      */
-    it('should process "its" also', function() {
+    it('should process "its" also', function () {
     })
   })
 });
