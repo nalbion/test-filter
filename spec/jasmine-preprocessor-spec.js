@@ -20,9 +20,9 @@ describe('jasmine preprocessor', function () {
     describe('spec parser', function () {
         /** @issue 7 */
         it('should parse annotations in spec files', function () {
-            var inlineJavaDoc = fs.readFileSync('test/fixtures/single-line-jasmine-comments.js',
+            var inlineJavaDoc = fs.readFileSync('test/fixtures/single-line-jasmine-comments-spec.js',
                                                 {encoding: 'utf8'});
-            var multilineJavaDoc = fs.readFileSync('test/fixtures/multi-line-jasmine-comments.js',
+            var multilineJavaDoc = fs.readFileSync('test/fixtures/multi-line-jasmine-comments-spec.js',
                                                 {encoding: 'utf8'});
 
             // {id, status, reporter, assignee, labels, release}
@@ -34,14 +34,14 @@ describe('jasmine preprocessor', function () {
             gitHub.parseIssue(issues, {number: 'ABC_654', state: 'closed'});
 
             var outputInline = jasminePreprocess(inlineJavaDoc, issues);
-            //fs.writeFileSync('test/fixtures/expected/single-line-jasmine-comments.js', outputInline);
-            expect(outputInline).toBe(fs.readFileSync('test/fixtures/expected/single-line-jasmine-comments.js',
+            //fs.writeFileSync('test/fixtures/expected/single-line-jasmine-comments-spec.js', outputInline);
+            expect(outputInline).toBe(fs.readFileSync('test/fixtures/expected/single-line-jasmine-comments-spec.js',
                                                         {encoding: 'utf8'}));
 
 
             var outputMultiline = jasminePreprocess(multilineJavaDoc, issues);
-            //fs.writeFileSync('test/fixtures/expected/multi-line-jasmine-comments.js', outputMultiline);
-            expect(outputMultiline).toBe(fs.readFileSync('test/fixtures/expected/multi-line-jasmine-comments.js',
+            //fs.writeFileSync('test/fixtures/expected/multi-line-jasmine-comments-spec.js', outputMultiline);
+            expect(outputMultiline).toBe(fs.readFileSync('test/fixtures/expected/multi-line-jasmine-comments-spec.js',
                                                         {encoding: 'utf8'}));
         });
     });

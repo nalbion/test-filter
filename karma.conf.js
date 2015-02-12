@@ -8,8 +8,8 @@ module.exports = function(config) {
         logLevel: config.LOG_INFO,
 
         files: [
-            'test/fixtures/**/*.js'
-            ,'test/fixtures/**/*-spec.js'
+            'test/fixtures/test.js',
+            'test/fixtures/*-spec.js'
         ],
         plugins: [
             'karma-jasmine',
@@ -31,7 +31,7 @@ module.exports = function(config) {
 //            }
 //        }
         ,testFilter: {
-            foo: 'bar'
+            modifyTestFiles: false
         }
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits

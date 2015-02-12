@@ -2,7 +2,7 @@ var _ = require('underscore');
 var semver = require('semver');
 var NodeGitHubApi = require('github');
 var pkg = require('../../package.json');
-
+var q = require("promised-io/promise");
 
 // var GitHubApi = require('../src/github-api.js');
 // var gitHub = new GitHubReader({host: "github.my-GHE-enabled-company.com"});
@@ -30,8 +30,8 @@ var GitHubApi = function(options) {
         }
     }, options);
 
-    this.repo = options.repo;
     this.group = options.group;
+    this.repo = options.repo;
     this.github = new NodeGitHubApi(options);
 };
 
@@ -100,7 +100,22 @@ GitHubIssue.prototype.determinePriorityMilestone = function (milestone) {
 };
 
 /**
- * @type {function(Object):Object.<string, GitHubIssue>} - accepts an object with the following fields:
+ * }
+ * Usage:
+ * <pre>
+ * github.getIssues().then(
+ *      function (/** @type {Object.<string, GitHubIssue>} *&#x2F(issues)) {
+ *          // process issues
+ *      },
+ *      function (error) {
+ *          // handle error
+ *      }
+ * </pre>
+ *
+ * @param {{user: string, repo: string, headers: Object=, milestone: string=, state: string=,
+  * assignee: string=, mentioned: string=, labels: string=, sort: string=, direction: string=,
+  * since: Date=, page: number=, per_page: number=}}
+ *      options - accepts an object with the following fields:
  headers (Object): Optional. Key/ value pair of request headers to pass along with the HTTP request. Valid headers are: 'If-Modified-Since', 'If-None-Match', 'Cookie', 'User-Agent', 'Accept', 'X-GitHub-OTP'.
  user (String): Required.
  repo (String): Required.
@@ -114,24 +129,29 @@ GitHubIssue.prototype.determinePriorityMilestone = function (milestone) {
  since (Date): Optional. Timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ
  page (Number): Optional. Page number of the results to fetch. Validation rule: ^[0-9]+$.
  per_page (Number): Optional. A custom page size up to 100. Default is 30. Validation rule: ^[0-9]+$.
+ * @return {Promise}
  */
-GitHubApi.prototype.getIssues = function (options, callback) {
+GitHubApi.prototype.getIssues = function (options) {
     options = _.extend({
         user: this.group,
         repo: this.repo
     }, options);
 
     var github = this;
+    var deferred = q.defer();
 
-    if (undefined === callback) {
-        callback =
-    }
-
-    return this.github.issues.repoIssues(options, function (error, data) {
-        //var issues = _.map(data, function(record) {
-		var issues = _.reduce(data, github.parseIssue, {});
-        callback(error, issues);
+    this.github.issues.repoIssues(options, function (error, data) {
+        if (error) {
+            console.error('Error downloading issues from GitHub');
+            deferred.reject(error);
+        } else {
+            var issues = _.reduce(data, github.parseIssue, {});
+            console.info('Downloaded issues from GitHub');
+            deferred.resolve(issues);
+        }
     });
+
+    return deferred.promise;
 };
 
 /**

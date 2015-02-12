@@ -1,12 +1,12 @@
 /**
  * Testing multi-line javadoc comments
- * @issue ABC_123 ABC_456
+ * @issue 1 2
  * @status open
  * @release 1.0.0
  */
 describe("inline javadoc", function () {
   /**
-   * @issue ABC_789
+   * @issue 3
    * @tag XYZ
    * @status open
    * @release 2.0.0
@@ -14,7 +14,7 @@ describe("inline javadoc", function () {
   describe('with nested describes', function () {
     /**
      * @release 2.0.0
-     * @issue ABC_987 ABC_654
+     * @issue 4 5
      * @skip
      * @status closed
      */

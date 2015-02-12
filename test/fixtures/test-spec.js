@@ -1,6 +1,11 @@
-describe('web test', function () {
+describe('karma test', function () {
     it('should say "Hello world!"', function () {
         expect(helloWorld()).toEqual('Hello world!');
+    });
+
+    /** @issue 1 */
+    it('should skip open issues"', function () {
+        expect('this test').toBe('skipped because the issue is open');
     });
 
     /** @release 100.0.0 */

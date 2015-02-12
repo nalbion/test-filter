@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 /**
  * Example:
  * <pre>
@@ -22,11 +24,11 @@
  * @param {string} input
  * @param {Object.<string, GitHubIssue>} issues - indexed by issue ID
  *                {id, status, reporter, assignee, labels, release}
+ * @param {string=} outputFilePath
  * @return {string}
  */
-exports.preprocess = function (input, issues) {
-    // scan through the input string
-    // build up maps "describes" and
+exports.preprocess = function (input, issues, outputFilePath) {
+    //var log = logger.create('test-filter.jasmine-parser');
 
     var ISSUE_REGEXP = /@issue ([^@(*/)]*)/;
     var TEST_REGEXP = /(\s*)(?:describe|it)\(\s*(?:"((?:[^"]|\")+)"|'((?:[^']|\')+)')/;
@@ -64,15 +66,18 @@ exports.preprocess = function (input, issues) {
             if (issueAnnotation) {
                 var testIssues = issueAnnotation[1].trim().split(' ');
                 for (var i = testIssues.length; i-- != 0;) {
-                    var testIssue = testIssues[i];
-                    testIssue = issues[testIssue];
-                    // if multiple status values go with the worst case scenario
-                    // ie OPEN
-                    status = testIssue.determinePriorityStatus(status);
+                    var testIssue = issues[testIssues[i]];
+                    if (undefined === testIssue) {
+                        console.warn('Issue not found on server', testIssues[i]);
+                    } else {
+                        // if multiple status values go with the worst case scenario
+                        // ie OPEN
+                        status = testIssue.determinePriorityStatus(status);
 
-                    // if multiple milestone values use the earliest milestone
-                    // (to avoid early failures refactor the tests)
-                    milestone = testIssue.determinePriorityMilestone(milestone);
+                        // if multiple milestone values use the earliest milestone
+                        // (to avoid early failures refactor the tests)
+                        milestone = testIssue.determinePriorityMilestone(milestone);
+                    }
                 }
             }
 
@@ -102,5 +107,8 @@ exports.preprocess = function (input, issues) {
         output += line + '\n';
     }
 
+    if (outputFilePath) {
+        fs.writeFileSync(outputFilePath, output);
+    }
     return output;
 };

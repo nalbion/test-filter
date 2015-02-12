@@ -25,6 +25,7 @@
 //exports.TestFilter = TestFilter;
 
 var appRoot = require('app-root-path');
+var _ = require('underscore');
 
 var IssuesApiFactory = function () {
 };
@@ -35,17 +36,21 @@ var IssuesApiFactory = function () {
 IssuesApiFactory.prototype.getIssuesApi = function (config) {
     var system, api;
 
+    var bugsUrl, pkg = require(appRoot + '/package.json');
+    if (undefined !== pkg.bugs && undefined !== pkg.bugs.url) {
+        bugsUrl = pkg.bugs.url;
+    } else if( config && config.host ) {
+        bugsUrl = config.host;
+    }
+    var bugsConfig = this.parseBugsUrl(bugsUrl);
+
     if (config && config.system) {
         system = config.system;
     } else {
-        var bugsUrl, pkg = require(appRoot + '/package.json');
-        if (undefined !== pkg && undefined !== pkg.bugs && undefined !== pkg.bugs.url) {
-            bugsUrl = pkg.bugs.url;
-        } else if( config && config.host ) {
-            bugsUrl = config.host;
-        }
-        system = this.parseSystem(bugsUrl);
+        system = bugsConfig.system;
     }
+
+    config = _.extend(bugsConfig, config);
 
     if ('github' == system) {
         var GitHubApi = require('./github-api.js');
@@ -63,15 +68,14 @@ IssuesApiFactory.prototype.getIssuesApi = function (config) {
 /**
  * Attempt to parse
  * @param {string} bugsUrl
- * @return {string} - 'github', 'jira' etc
+ * @return {{system: string, group: string, repo: string} where system is one of 'github', 'jira' etc
  */
-IssuesApiFactory.prototype.parseSystem = function(bugsUrl) {
-    if (bugsUrl.indexOf('github') > 0) {
-        return 'github';
-    } else if (bugsUrl.indexOf('bitbucket') > 0) {
-        return 'bitbucket';
+IssuesApiFactory.prototype.parseBugsUrl = function(bugsUrl) {
+    var match = bugsUrl.match(/.*(github|bitbucket)[^\/]*\/([^\/]*)\/([^\/]*)\/issues/);
+    if (match) {
+        return {system: match[1], group: match[2], repo: match[3]};
     } else if (bugsUrl.indexOf('jira') > 0) {
-        return 'jira';
+        return {system: 'jira'};
     };
 
     throw 'Could not determine issue type from url: ' + bugsUrl;

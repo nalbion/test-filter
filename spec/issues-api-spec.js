@@ -12,9 +12,18 @@ xdescribe('Issues API', function () {
         )
 
         it('should be able to parse URLS', function () {
-            expect(issuesApiFactory.parseSystem('https://github.com/nalbion/test-filter/issues')).toBe('github');
-            expect(issuesApiFactory.parseSystem('http://jira.secondlife.com')).toBe('jira');
-            expect(issuesApiFactory.parseSystem('https://issues.apache.org/jira/')).toBe('jira');
+            var bugsConfig = issuesApiFactory.parseBugsUrl('https://github.com/nalbion/test-filter/issues');
+            expect(bugsConfig.system).toBe('github');
+            expect(bugsConfig.group).toBe('nalbion');
+            expect(bugsConfig.repo).toBe('test-filter');
+
+            bugsConfig = issuesApiFactory.parseBugsUrl('https://bitbucket.org/nalbion/test-filter/issues');
+            expect(bugsConfig.system).toBe('bitbucket');
+            expect(bugsConfig.group).toBe('nalbion');
+            expect(bugsConfig.repo).toBe('test-filter');
+
+            expect(issuesApiFactory.parseBugsUrl('http://jira.secondlife.com').system).toBe('jira');
+            expect(issuesApiFactory.parseBugsUrl('https://issues.apache.org/jira/').system).toBe('jira');
         });
 
         it('should accept an optional options object - system, host, username etc', function () {
