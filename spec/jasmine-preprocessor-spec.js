@@ -62,10 +62,12 @@ describe('jasmine preprocessor', function () {
             gitHub.getIssues({
                 user: 'nalbion',
                 repo: 'test-filter'
-            }, function (response_error, response_data) {
-                error = response_error;
+            }).then(function (response_data) {
                 issues = response_data;
                 done();
+            }, function (response_error) {
+                error = response_error;
+                done(response_error);
             });
         });
 

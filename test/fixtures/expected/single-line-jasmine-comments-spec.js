@@ -1,16 +1,8 @@
-/** @issue ABC_123 ABC_456 
- * @status open
- * @release 1.0.0
- */
+/** @issue ABC_123 ABC_456 */
 describe("inline javadoc", function () {
-  /** @issue ABC_789   @tag XYZ 
-   * @status open
-   * @release 2.0.0
-   */
+  /** @issue ABC_789   @tag XYZ */
   describe('with nested describes', function () {
-    /** @issue ABC_987 ABC_654 
-     * @status closed
-     */
+    /** @issue ABC_987 ABC_654 */
     it("should process 'it's also", function() {
     })
   })
