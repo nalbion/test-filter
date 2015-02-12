@@ -31,7 +31,7 @@ exports.preprocess = function (input, issues, outputFilePath) {
     //var log = logger.create('test-filter.jasmine-parser');
 
     var ISSUE_REGEXP = /@issue ([^@(*/)]*)/;
-    var GENERATED_REGEXP = / \* @(status|release) .*/;
+    var GENERATED_REGEXP = / \* @(status|release) ([^@(*/)]*)/;
     var TEST_REGEXP = /(\s*)(?:describe|it)\(\s*(?:"((?:[^"]|\")+)"|'((?:[^']|\')+)')/;
     var pathArray = [],
         inComment = false, singleLineComment,
@@ -66,7 +66,17 @@ exports.preprocess = function (input, issues, outputFilePath) {
         //support optional -version=0.0.1
         //support optional -issue=ABC_1
         if (inComment) {
-            if (line.match(GENERATED_REGEXP)) {
+            var match = line.match(GENERATED_REGEXP);
+			if (match) {
+				// Save attr value just in case not specified in issue.
+				// If either attr _is_ set here and in the issues
+				// this value may overrule the value in the issues,
+				// if so determined by the determinePriorityXxxx method.
+				if ('status' == match[1]) {
+					status = match[2];
+				} else if ('release' == match[1]) {
+					milestone = match[2];
+				}
                 singleLineComment = false;
                 continue;
             }
