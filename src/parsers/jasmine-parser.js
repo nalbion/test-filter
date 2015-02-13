@@ -1,6 +1,8 @@
 var fs = require('fs');
 
 /**
+ * Called by karma-test-filter-preprocessor
+ *
  * Example:
  * <pre>
  * /**

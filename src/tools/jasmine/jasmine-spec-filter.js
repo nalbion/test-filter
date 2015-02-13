@@ -11,7 +11,7 @@ module.exports = function () {
 // var jasmineSpecFilter = require('test-filter').jasmineSpecFilter;
 // jasmineSpecFilter();
 /** Called from Jasmine to check if each spec should be executed */
-exports.jasmineSpecFilter = function () {
+exports.jasmineSpecFilter = function (spec) {
     return true;
 };
 
