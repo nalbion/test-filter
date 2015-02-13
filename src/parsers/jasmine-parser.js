@@ -1,5 +1,7 @@
 var fs = require('fs');
 
+var testAnnotations = {};
+
 /**
  * Example:
  * <pre>
@@ -68,6 +70,7 @@ exports.preprocess = function (input, issues, outputFilePath) {
         if (inComment) {
             if (line.match(GENERATED_REGEXP)) {
                 singleLineComment = false;
+                // remove previously generated annotations
                 continue;
             }
             var issueAnnotation = line.match(ISSUE_REGEXP);
@@ -118,3 +121,27 @@ exports.preprocess = function (input, issues, outputFilePath) {
     }
     return output;
 };
+
+
+//var markSkippedAsPending = false;
+//
+///**
+// * @param spec
+// * @returns {boolean}
+// * @this {Jasmine}
+// */
+//exports.specFilter = function (spec) {
+//    //console.info(spec.description);
+//    console.info(spec.result.fullName);
+//    //runnableLookupTable[spec.id]
+//    //console.info(spec);
+//    //console.info(spec.beforeAndAfterFns().befores)
+//    //spec.result.pendingReason = 'Nick hacked it';
+//    //return specFilter.matches(spec.getFullName());
+//    if (markSkippedAsPending) {
+//        spec.pend('Nick hacked it');
+//        return true;
+//    } else {
+//        return false;
+//    }
+//};

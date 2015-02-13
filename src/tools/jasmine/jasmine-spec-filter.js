@@ -7,17 +7,21 @@ module.exports = function () {
 };
 
 
-
-// var jasmineSpecFilter = require('test-filter').jasmineSpecFilter;
-// jasmineSpecFilter();
-/** Called from Jasmine to check if each spec should be executed */
-exports.jasmineSpecFilter = function () {
-    return true;
-};
-
 //var markSkippedAsPending = false;
-//
-//jasmine.getEnv().specFilter = function(spec) {
+
+///**
+// * Called from Jasmine to check if each spec should be executed
+// * <pre>
+// *     var TestFilter = require('test-filter');
+// *     var testFitler = new TestFilter();
+// *     jasmine.getEnv().specFilter = testFilter.jasmineSpecFilter
+// * </pre>
+// *
+// * @param spec
+// * @returns {boolean}
+// * @this {Jasmine}
+// */
+//exports.specFilter = function (spec) {
 //    //console.info(spec.description);
 //    console.info(spec.result.fullName);
 //    //runnableLookupTable[spec.id]
@@ -33,17 +37,15 @@ exports.jasmineSpecFilter = function () {
 //    }
 //};
 
-
-
 	
-/* jasmine reporter events: 
-'jasmineStarted',
-      'jasmineDone',
-      'suiteStarted',
-      'suiteDone',
-      'specStarted',
-      'specDone'
-*/
-this.suiteDone = function(result) {
-      storeSuite(result);
-    };
+///* jasmine reporter events:
+//'jasmineStarted',
+//      'jasmineDone',
+//      'suiteStarted',
+//      'suiteDone',
+//      'specStarted',
+//      'specDone'
+//*/
+//this.suiteDone = function(result) {
+//      storeSuite(result);
+//    };

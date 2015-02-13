@@ -69,7 +69,7 @@ var createTestFilterPreprocessor = function(logger, basePath, frameworks, testFi
     var preprocess = require('../../parsers/' + framework + '-parser.js').preprocess;
 
     return function(content, file, done) {
-        log.info('Processing "%s".', file.originalPath);
+        log.info('Pre-processing "%s".', file.originalPath);
         // When running the tests for this module I don't want the test files modified
         // but it would generally be useful so that offline mode can be used.
         var outputFile = (testFilterConfig && false === testFilterConfig.modifyTestFiles) ?

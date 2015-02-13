@@ -1,17 +1,12 @@
-var markSkippedAsPending = false;
+//jasmine.getEnv().specFilter = require('../../src/parsers/jasmine-parser.js').specFilter;
 
-//jasmine.getEnv().specFilter = function(spec) {
-//    //console.info(spec.description);
-//    console.info(spec.result.fullName);
-//    //runnableLookupTable[spec.id]
-//    //console.info(spec);
-//    //console.info(spec.beforeAndAfterFns().befores)
-//    //spec.result.pendingReason = 'Nick hacked it';
-//    //return specFilter.matches(spec.getFullName());
-//    if (markSkippedAsPending) {
-//        spec.pend('Nick hacked it');
-//        return true;
-//    } else {
-//        return false;
-//    }
-//};
+//var TestFilter = require('../../index.js');
+//var testFilter = new TestFilter(require('./package.json'));
+//jasmine.getEnv().specFilter = testFilter.jasmineSpecFilter;
+
+beforeAll(function (done) {
+    console.info('Global beforeAll');
+    //console.info(jasmine);
+    //jasmine.addReporter();
+    done();
+});
