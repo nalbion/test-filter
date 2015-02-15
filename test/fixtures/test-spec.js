@@ -6,7 +6,7 @@ describe('karma test', function () {
     /** @issue 1 
      * @status open
      */
-    it('should skip open issues"', function () {
+    it('should skip open issues', function () {
         expect('this test').toBe('skipped because the issue is open');
     });
 
@@ -16,8 +16,42 @@ describe('karma test', function () {
     });
 });
 
+/**
+ * @release 1.0.0
+ * @status closed
+ */
+describe('other test', function () {
+    /**
+     * @release 1.1.0
+     */
+    describe('with nested describe', function () {
+        /**
+         * @release 1.1.1
+         */
+        it('has one "it"', function () {
+        })
 
+        /**
+         * @release 1.1.2
+         */
+        it('has another "it"', function () {
+        })
+    })
 
+    /**
+     * @release 1.2.0
+     */
+    describe('and another nested describe', function () {
+        /**
+         * @release 1.2.1
+         */
+        it('also has one "it"', function () {
+        })
 
-
-
+        /**
+         * @release 1.2.2
+         */
+        it('also has another "it"', function () {
+        })
+    })
+})

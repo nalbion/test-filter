@@ -58,15 +58,15 @@ describe('Issues API', function () {
             it('should select the highest priority version/milestone', function () {
                 var issuesApi = issuesApiFactory.getIssuesApi(),
                     issues = {},
-                    uninitialisedMilestone;
+                    uninitialisedRelease;
                 issuesApi.parseIssue(issues, {number: 'TEST_1', milestone: {title: '1.0.0'}});
                 issuesApi.parseIssue(issues, {number: 'TEST_2', milestone: {title: '2.0.0'}});
 
-                expect(issues['TEST_1'].determinePriorityMilestone(uninitialisedMilestone)).toBe('1.0.0');
-                expect(issues['TEST_2'].determinePriorityMilestone(uninitialisedMilestone)).toBe('2.0.0');
-                expect(issues['TEST_1'].determinePriorityMilestone('0.0.1')).toBe('0.0.1');
-                expect(issues['TEST_1'].determinePriorityMilestone('1.0.0')).toBe('1.0.0');
-                expect(issues['TEST_2'].determinePriorityMilestone('3.0.0')).toBe('2.0.0');
+                expect(issues['TEST_1'].determinePriorityRelease(uninitialisedRelease)).toBe('1.0.0');
+                expect(issues['TEST_2'].determinePriorityRelease(uninitialisedRelease)).toBe('2.0.0');
+                expect(issues['TEST_1'].determinePriorityRelease('0.0.1')).toBe('0.0.1');
+                expect(issues['TEST_1'].determinePriorityRelease('1.0.0')).toBe('1.0.0');
+                expect(issues['TEST_2'].determinePriorityRelease('3.0.0')).toBe('2.0.0');
             })
         })
     })

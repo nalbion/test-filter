@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 /**
  * @constructor
  */
@@ -36,14 +38,20 @@ JasmineSpecFilter.prototype.specFilter = function (spec) {
 };
 
 /**
+ * Scans through Jasmine spec files, capturing all annotations that apply to each spec.
  * @param {{files: Array.<string>}} config
+ * @return {Object.<string, Object.<string, string>>}
+ *      eg: {'spec name': {'release': '1.0.0', 'status': 'open', 'issue': '1 2 3'}}
  */
 JasmineSpecFilter.prototype.evaluateSpecAttributes = function (config) {
-    var files = config.files;
+    var specAttributes = {},
+        jasmineParser = require('../../parsers/jasmine-parser.js'),
+        files = config.files;
     for (var i = 0; i < files.length; i++) {
-
+        jasmineParser.evaluateSpecAttributes(files[i], specAttributes);
     }
 
+    return specAttributes;
 };
 
 ///* jasmine reporter events:

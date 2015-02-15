@@ -2,14 +2,35 @@ var GitHubApi = require('../src/issues/github-api.js');
 var gitHub = new GitHubApi();
 var _ = require('underscore');
 var fs = require('fs');
-var jasminePreprocess = require('../src/parsers/jasmine-parser.js').preprocess;
+var jasmineParser = require('../src/parsers/jasmine-parser.js');
+var jasminePreprocess = jasmineParser.preprocess;
 //var jasmineSpecParser = new JasmineSpecParser('spec/**/*-spec.js');
 
 
 xdescribe('skipped feature', function () {
-    it('should never be executed', function() {
+    it('should never be executed', function () {
         expect(this).toBe('never executed');
     });
+});
+
+describe('jasmine spec filter', function () {
+   fit('should evaluate spec annotations', function () {
+       var specAnnotations = {};
+
+       jasmineParser.evaluateSpecAnnotations('test/fixtures/test-spec.js',
+                                            specAnnotations);
+       var spec1 = specAnnotations['karma test should skip open issues'];
+       expect(spec1.status).toBe('open');
+
+       //jasmineParser.evaluateSpecAnnotations('test/fixtures/expected/single-line-jasmine-comments-spec.js',
+       //                                     specAnnotations);
+       //var spec1 = specAnnotations['inline javadoc'];
+       //var spec2 = specAnnotations['inline javadoc with nested describes'];
+       //var spec3 = specAnnotations["inline javadoc with nested describes should process 'it's also"];
+       //expect(spec1.issue).toBe('1 2');
+       //expect(spec2.tag).toBe('XYZ');
+       //expect(spec3.issue).toBe('4 5');
+   })
 });
 
 describe('jasmine preprocessor', function () {

@@ -1,4 +1,5 @@
 var fs = require('fs');
+var _ = require('underscore');
 
 var testAnnotations = {};
 
@@ -36,54 +37,22 @@ exports.preprocess = function (input, issues, outputFilePath) {
 
     var ISSUE_REGEXP = /@issue ([^@(*/)]*)/;
     var GENERATED_REGEXP = / \* @(status|release) ([^@(*/)]*)/;
-    var TEST_REGEXP = /(\s*)(?:describe|it)\(\s*(?:"((?:[^"]|\")+)"|'((?:[^']|\')+)')/;
-    var pathArray = [],
-        inComment = false, singleLineComment,
-        start = 0, end,
-        output = '', line,
-        status, milestone,
-		prevStatus, prevMilestone;
+    var singleLineComment, output = '';
 
-    while (start >= 0) {
-        end = input.indexOf('\n', start + 1);
-		if (end > 0) {
-			line = input.substring(start, end);
-            start = end + 1;
-		} else {
-			// no EOL on last line
-			line = input.substring(start);
-            if (0 == line.length) {
-                break;
-            }
-            start = -1;
-		}
-
-        // detect javadoc-style comments
-        // support single-line javadoc comments
-        if (!inComment) {
-            if (line.indexOf('/**') >= 0) {
-                inComment = true;
-                singleLineComment = true;
-                status = milestone = undefined;
-            }
-        }
-
-        //support optional -version=0.0.1
-        //support optional -issue=ABC_1
-        if (inComment) {
-            var match = line.match(GENERATED_REGEXP);
-			if (match) {
-				// Save attr value just in case not specified in issue.
-				// These values will be over-rided by values 
-				// specified on the issues. 
-				if ('status' == match[1]) {
-					prevStatus = match[2];
-				} else if ('release' == match[1]) {
-					prevMilestone = match[2];
-				}
-                singleLineComment = false;
+    output = parseSpecFile(input, output,
+        function (line, annotations) {
+            var match = line.match(GENERATED_REGEXP); // @issue and @release
+            if (match) {
+                // Save attr value just in case not specified in issue.
+                // These values will be over-rided by values
+                // specified on the issues.
+                if ('status' == match[1]) {
+                    annotations.prevStatus = match[2];
+                } else if ('release' == match[1]) {
+                    annotations.prevRelease = match[2];
+                }
                 // remove previously generated annotations
-                continue;
+                return false;
             }
             var issueAnnotation = line.match(ISSUE_REGEXP);
             if (issueAnnotation) {
@@ -95,40 +64,32 @@ exports.preprocess = function (input, issues, outputFilePath) {
                     } else {
                         // if multiple status values go with the worst case scenario
                         // ie OPEN
-                        status = testIssue.determinePriorityStatus(status);
+                        annotations.status = testIssue.determinePriorityStatus(annotations.status);
 
-                        // if multiple milestone values use the earliest milestone
+                        // if multiple release values use the earliest release
                         // (to avoid early failures refactor the tests)
-                        milestone = testIssue.determinePriorityMilestone(milestone);
+                        annotations.release = testIssue.determinePriorityRelease(annotations.release);
                     }
                 }
             }
-
-			end = line.indexOf('*/');
-            if (end >= 0) {
-                inComment = false;
-            } else {
-                singleLineComment = false;
-            }
-        } else if (status || milestone) {
-            var match = line.match(TEST_REGEXP);
-			if (match) {
-				// remove the comment closing chars
-				output = output.substring(0, output.length -
-                                    (singleLineComment ? 3 : (match[1].length + 5)));
-                status = status || prevStatus;
-				if (status) {
+        },
+        function (match, singleLineComment, annotations, output) {
+            if (_.keys(annotations).length != 0) {
+                // remove the comment closing chars
+                output = output.substring(0, output.length - (singleLineComment ? 3 : (match[1].length + 5)));
+                var status = annotations.status || annotations.prevStatus;
+                if (status) {
                     output += '\n' + match[1] + ' * @status ' + status;
                 }
-				milestone = milestone || prevMilestone;
-                if (milestone) {
-                    output += '\n' + match[1] + ' * @release ' + milestone;
+                var release = annotations.release || annotations.prevRelease;
+                if (release) {
+                    output += '\n' + match[1] + ' * @release ' + release;
                 }
                 output += '\n' + match[1] + ' */\n';
-			}
+                return output;
+            }
         }
-        output += line + '\n';
-    }
+    );
 
     if (outputFilePath) {
         fs.writeFileSync(outputFilePath, output);
@@ -137,25 +98,104 @@ exports.preprocess = function (input, issues, outputFilePath) {
 };
 
 
-//var markSkippedAsPending = false;
-//
-///**
-// * @param spec
-// * @returns {boolean}
-// * @this {Jasmine}
-// */
-//exports.specFilter = function (spec) {
-//    //console.info(spec.description);
-//    console.info(spec.result.fullName);
-//    //runnableLookupTable[spec.id]
-//    //console.info(spec);
-//    //console.info(spec.beforeAndAfterFns().befores)
-//    //spec.result.pendingReason = 'Nick hacked it';
-//    //return specFilter.matches(spec.getFullName());
-//    if (markSkippedAsPending) {
-//        spec.pend('Nick hacked it');
-//        return true;
-//    } else {
-//        return false;
-//    }
-//};
+/**
+ *
+ * @param {string} file
+ * @param {Object.<string, Object.<string, string>>} specAnnotations (output)
+ *      eg: {'spec name': {'release': '1.0.0', 'status': 'open', 'issue': '1 2 3'}}
+ */
+exports.evaluateSpecAnnotations = function (file, specAnnotations) {
+    var input = fs.readFileSync(file, {encoding: 'utf8'});
+    var ANNOTATION_REGEXP = / \* @(issue|status|release) ([^@(*/)]*)/;
+    //specAnnotations.rootPath = '';
+
+    parseSpecFile(input, {path: ''},
+        function (line, annotations) {
+            var match = line.match(ANNOTATION_REGEXP);
+            if (match) {
+                annotations[match[1]] = match[2];
+            }
+        },
+        function (match, singleLineComment, annotations, output) {
+            var path;
+            //if (undefined !== match[2]) {
+            //    console.info(match[2], ': ', match[3]);
+                path = output.path + ' ' + match[2];
+            //} else {
+            //    console.info(match[2], ': ', match[3]);
+                path = output.path + ' ' + match[3];
+            //}
+
+            console.info('path: ', path);
+            output.path = path;
+            return output;
+        }
+    )
+};
+
+
+/**
+ * @param {string} input
+ * @param {string} output - 4th parameter to, and return value of processSpecDeclaration()
+ * @param {function(string, Object)} parseCommentLine - return false if the line should be excluded from the output
+ * @param {function(Array.<string>, boolean, string, string)} processSpecDeclaration
+ */
+function parseSpecFile(input, output, parseCommentLine, processSpecDeclaration) {
+    //var ISSUE_REGEXP = /@issue ([^@(*/)]*)/;
+    //var GENERATED_REGEXP = / \* @(status|release) ([^@(*/)]*)/;
+    var TEST_REGEXP = /(\s*)[fx]?(?:describe|it)\(\s*(?:"((?:[^"]|\")+)"|'((?:[^']|\')+)')/;
+    var OPEN_BLOCK_REGEXP = /{[^'"]*$/;
+    var CLOSE_BLOCK_REGEXP = /}[^'"]*$/;
+    var inComment = false, singleLineComment,
+        start = 0, end,
+        annotations, line;
+
+    while (start >= 0) {
+        end = input.indexOf('\n', start + 1);
+        if (end > 0) {
+            line = input.substring(start, end);
+            start = end + 1;
+        } else {
+            // no EOL on last line
+            line = input.substring(start);
+            if (0 == line.length) {
+                break;
+            }
+            start = -1;
+        }
+
+        // detect javadoc-style comments
+        // support single-line javadoc comments
+        if (!inComment) {
+            if (line.indexOf('/**') >= 0) {
+                inComment = true;
+                singleLineComment = true;
+                annotations = {};
+            }
+        }
+
+        if (inComment) {
+            if (false === parseCommentLine(line, annotations) ) {
+                continue;
+            };
+
+            end = line.indexOf('*/');
+            if (end >= 0) {
+                inComment = false;
+            } else {
+                singleLineComment = false;
+            }
+        } else {
+            var match = line.match(TEST_REGEXP);
+            if (match) {
+                output = processSpecDeclaration(match, singleLineComment, annotations, output);
+            }
+        }
+
+        if (typeof output === 'string') {
+            output += line + '\n';
+        }
+    }
+
+    return output;
+};

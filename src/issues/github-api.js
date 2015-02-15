@@ -83,19 +83,19 @@ GitHubIssue.prototype.determinePriorityStatus = function (status) {
 };
 
 /**
- * If multiple milestone values use the earliest milestone
+ * If multiple release values use the earliest release
  * (to avoid early failures refactor the tests)
  *
- * @param {string} milestone
+ * @param {string} release
  * @return {string}
  */
-GitHubIssue.prototype.determinePriorityMilestone = function (milestone) {
-    if (undefined === milestone) {
+GitHubIssue.prototype.determinePriorityRelease = function (release) {
+    if (undefined === release) {
         return this.release;
     } else if (undefined === this.release) {
-        return milestone;
+        return release;
     } else {
-        return semver.lte(this.release, milestone) ? this.release : milestone;
+        return semver.lte(this.release, release) ? this.release : release;
     }
 };
 
