@@ -1,8 +1,8 @@
 //jasmine.getEnv().specFilter = require('../../src/parsers/jasmine-parser.js').specFilter;
 
-//var TestFilter = require('../../index.js');
-//var testFilter = new TestFilter(require('./package.json'));
-//jasmine.getEnv().specFilter = testFilter.jasmineSpecFilter;
+var TestFilter = require('../../src/index.js');
+var testFilter = new TestFilter(require('../../package.json'));
+testFilter.createJasmineSpecFilter();
 
 beforeAll(function (done) {
     console.info('Global beforeAll');
@@ -10,3 +10,13 @@ beforeAll(function (done) {
     //jasmine.addReporter();
     done();
 });
+
+
+//beforeEach(function(done) {
+//    console.info('beforeEach', this);
+//});
+
+//jasmine.suiteStarted = function(suite) {
+//    console.info('suiteStarted', suite);
+//};
+

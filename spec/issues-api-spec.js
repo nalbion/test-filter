@@ -1,7 +1,7 @@
 var issuesApiFactory = require('../src/issues/issues-api.js');
 var _github = require('../src/issues/github-api.js');
 
-xdescribe('Issues API', function () {
+describe('Issues API', function () {
     describe('factory', function () {
         it('should be able to determine the issue management system from the bugs.url section in package.json',
             function () {

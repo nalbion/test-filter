@@ -3,6 +3,8 @@ var fs = require('fs');
 var testAnnotations = {};
 
 /**
+ * Called by karma-test-filter-preprocessor
+ *
  * Example:
  * <pre>
  * /**
@@ -33,13 +35,14 @@ exports.preprocess = function (input, issues, outputFilePath) {
     //var log = logger.create('test-filter.jasmine-parser');
 
     var ISSUE_REGEXP = /@issue ([^@(*/)]*)/;
-    var GENERATED_REGEXP = / \* @(status|release) .*/;
+    var GENERATED_REGEXP = / \* @(status|release) ([^@(*/)]*)/;
     var TEST_REGEXP = /(\s*)(?:describe|it)\(\s*(?:"((?:[^"]|\")+)"|'((?:[^']|\')+)')/;
     var pathArray = [],
         inComment = false, singleLineComment,
         start = 0, end,
         output = '', line,
-        status, milestone;
+        status, milestone,
+		prevStatus, prevMilestone;
 
     while (start >= 0) {
         end = input.indexOf('\n', start + 1);
@@ -68,7 +71,16 @@ exports.preprocess = function (input, issues, outputFilePath) {
         //support optional -version=0.0.1
         //support optional -issue=ABC_1
         if (inComment) {
-            if (line.match(GENERATED_REGEXP)) {
+            var match = line.match(GENERATED_REGEXP);
+			if (match) {
+				// Save attr value just in case not specified in issue.
+				// These values will be over-rided by values 
+				// specified on the issues. 
+				if ('status' == match[1]) {
+					prevStatus = match[2];
+				} else if ('release' == match[1]) {
+					prevMilestone = match[2];
+				}
                 singleLineComment = false;
                 // remove previously generated annotations
                 continue;
@@ -103,10 +115,12 @@ exports.preprocess = function (input, issues, outputFilePath) {
 			if (match) {
 				// remove the comment closing chars
 				output = output.substring(0, output.length -
-                                        (singleLineComment ? 3 : (match[1].length + 5)));
-                if (status) {
+                                    (singleLineComment ? 3 : (match[1].length + 5)));
+                status = status || prevStatus;
+				if (status) {
                     output += '\n' + match[1] + ' * @status ' + status;
                 }
+				milestone = milestone || prevMilestone;
                 if (milestone) {
                     output += '\n' + match[1] + ' * @release ' + milestone;
                 }
