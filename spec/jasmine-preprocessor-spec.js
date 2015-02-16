@@ -19,17 +19,45 @@ describe('jasmine spec filter', function () {
 
        jasmineParser.evaluateSpecAnnotations('test/fixtures/test-spec.js',
                                             specAnnotations);
-       var spec1 = specAnnotations['karma test should skip open issues'];
-       expect(spec1.status).toBe('open');
+       var spec = specAnnotations['karma test should skip open issues'];
+       expect(spec.status).toBe('open');
+       expect(spec.issue).toBe('1');
+       expect(spec.release).toBeUndefined();
 
-       //jasmineParser.evaluateSpecAnnotations('test/fixtures/expected/single-line-jasmine-comments-spec.js',
-       //                                     specAnnotations);
-       //var spec1 = specAnnotations['inline javadoc'];
-       //var spec2 = specAnnotations['inline javadoc with nested describes'];
-       //var spec3 = specAnnotations["inline javadoc with nested describes should process 'it's also"];
-       //expect(spec1.issue).toBe('1 2');
-       //expect(spec2.tag).toBe('XYZ');
-       //expect(spec3.issue).toBe('4 5');
+       spec = specAnnotations['karma test should say "Hello dude!" - but not until release 100.0.0'];
+       expect(spec.status).toBeUndefined();
+       expect(spec.issue).toBeUndefined();
+       expect(spec.release).toBe('100.0.0');
+
+       spec = specAnnotations['other test'];
+       expect(spec.status).toBe('closed');
+       expect(spec.issue).toBeUndefined();
+       expect(spec.release).toBe('1.0.0');
+
+       spec = specAnnotations['other test and another nested describe also has another "it"'];
+       expect(spec.status).toBe('open');
+       expect(spec.issue).toBeUndefined();
+       expect(spec.release).toBe('1.2.2');
+
+       spec = specAnnotations['specs without annotations'];
+       expect(spec.status).toBeUndefined();
+       expect(spec.issue).toBeUndefined();
+       expect(spec.release).toBeUndefined();
+
+       spec = specAnnotations['specs without annotations at any level should evaluate without annotations'];
+       expect(spec.status).toBeUndefined();
+       expect(spec.issue).toBeUndefined();
+       expect(spec.release).toBeUndefined();
+
+       spec = specAnnotations['specs without annotations except here and with extra level should evaluate with an issue annotation'];
+       expect(spec.status).toBeUndefined();
+       expect(spec.issue).toBe('1');
+       expect(spec.release).toBeUndefined();
+
+       spec = specAnnotations['specs without annotations except here should still evaluate with issue annotation'];
+       expect(spec.status).toBeUndefined();
+       expect(spec.issue).toBe('1');
+       expect(spec.release).toBeUndefined();
    })
 });
 

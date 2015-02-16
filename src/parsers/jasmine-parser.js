@@ -1,8 +1,6 @@
 var fs = require('fs');
 var _ = require('underscore');
 
-var testAnnotations = {};
-
 /**
  * Called by karma-test-filter-preprocessor
  *
@@ -73,7 +71,7 @@ exports.preprocess = function (input, issues, outputFilePath) {
                 }
             }
         },
-        function (match, singleLineComment, annotations, output) {
+        function (match, blockLevel, singleLineComment, annotations, output) {
             if (_.keys(annotations).length != 0) {
                 // remove the comment closing chars
                 output = output.substring(0, output.length - (singleLineComment ? 3 : (match[1].length + 5)));
@@ -106,28 +104,43 @@ exports.preprocess = function (input, issues, outputFilePath) {
  */
 exports.evaluateSpecAnnotations = function (file, specAnnotations) {
     var input = fs.readFileSync(file, {encoding: 'utf8'});
-    var ANNOTATION_REGEXP = / \* @(issue|status|release) ([^@(*/)]*)/;
-    //specAnnotations.rootPath = '';
+    var ANNOTATION_REGEXP = /@(issue|status|release) ([^@(*/)]*)/;
+    var prevBlockLevel = 0;
 
-    parseSpecFile(input, {path: ''},
+    parseSpecFile(input, [{path:'', annotations:{}}],
         function (line, annotations) {
             var match = line.match(ANNOTATION_REGEXP);
             if (match) {
-                annotations[match[1]] = match[2];
+                annotations[match[1]] = match[2].trim();
             }
         },
-        function (match, singleLineComment, annotations, output) {
-            var path;
-            //if (undefined !== match[2]) {
-            //    console.info(match[2], ': ', match[3]);
-                path = output.path + ' ' + match[2];
-            //} else {
-            //    console.info(match[2], ': ', match[3]);
-                path = output.path + ' ' + match[3];
-            //}
+        function (match, blockLevel, singleLineComment, annotations, output) {
+            var path = (output[blockLevel].path == '') ? match[3] :
+                                                        output[blockLevel].path + ' ' + match[3];
 
-            console.info('path: ', path);
-            output.path = path;
+
+            if( blockLevel < prevBlockLevel ) {
+                output[blockLevel].annotations = {};
+            }
+
+            console.info(prevBlockLevel, blockLevel, path);
+            console.info('saved annotations: ', output[blockLevel].annotations);
+            console.info('new annotations: ', annotations);
+
+            var evaluatedAnnotations = annotations ?
+                                        _.extend({}, output[blockLevel].annotations, annotations) :
+                                        output[blockLevel].annotations;
+
+            // Update the path and annotations for the caller
+            specAnnotations[path] = evaluatedAnnotations;
+
+            // update the internal graph
+            output[blockLevel + 1] = {
+               path: path,
+               annotations: evaluatedAnnotations
+            };
+
+            prevBlockLevel = blockLevel;
             return output;
         }
     )
@@ -138,7 +151,7 @@ exports.evaluateSpecAnnotations = function (file, specAnnotations) {
  * @param {string} input
  * @param {string} output - 4th parameter to, and return value of processSpecDeclaration()
  * @param {function(string, Object)} parseCommentLine - return false if the line should be excluded from the output
- * @param {function(Array.<string>, boolean, string, string)} processSpecDeclaration
+ * @param {function(Array.<string>, number, boolean, string, string)} processSpecDeclaration
  */
 function parseSpecFile(input, output, parseCommentLine, processSpecDeclaration) {
     //var ISSUE_REGEXP = /@issue ([^@(*/)]*)/;
@@ -147,8 +160,9 @@ function parseSpecFile(input, output, parseCommentLine, processSpecDeclaration) 
     var OPEN_BLOCK_REGEXP = /{[^'"]*$/;
     var CLOSE_BLOCK_REGEXP = /}[^'"]*$/;
     var inComment = false, singleLineComment,
+        blockLevel = 0,
         start = 0, end,
-        annotations, line;
+        annotations = [{}], line;
 
     while (start >= 0) {
         end = input.indexOf('\n', start + 1);
@@ -170,12 +184,11 @@ function parseSpecFile(input, output, parseCommentLine, processSpecDeclaration) 
             if (line.indexOf('/**') >= 0) {
                 inComment = true;
                 singleLineComment = true;
-                annotations = {};
             }
         }
 
         if (inComment) {
-            if (false === parseCommentLine(line, annotations) ) {
+            if (false === parseCommentLine(line, annotations[blockLevel]) ) {
                 continue;
             };
 
@@ -188,7 +201,27 @@ function parseSpecFile(input, output, parseCommentLine, processSpecDeclaration) 
         } else {
             var match = line.match(TEST_REGEXP);
             if (match) {
-                output = processSpecDeclaration(match, singleLineComment, annotations, output);
+                output = processSpecDeclaration(match, blockLevel, singleLineComment,
+                                                annotations[blockLevel], output);
+            }
+
+            // Update blockLevel
+            for (var i = 0, quote; i < line.length; i++) {
+                var c = line[i];
+                if (undefined == quote) {
+                    if ('{' == c) {
+                        blockLevel++;
+                        annotations[blockLevel] = _.extend(annotations[blockLevel - 1]);
+                    } else if ('}' == c) {
+
+                        blockLevel--;
+                        annotations[blockLevel] = {};
+                    } else if (('"' == c || "'" == c) && i > 0 && line[i-1] != '\\') {
+                        quote = c;
+                    }
+                } else if(quote == c) {
+                    quote = undefined;
+                }
             }
         }
 

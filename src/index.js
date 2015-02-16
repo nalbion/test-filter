@@ -31,7 +31,8 @@ var TestFilter = function (config) {
     this.createJasmineSpecFilter = function() {
         var JasmineSpecFilter = require('./tools/jasmine/jasmine-spec-filter');
         var jasmineSpecFilter = new JasmineSpecFilter();
-        var specFilter = _.bind(jasmineSpecFilter.specFilter, this);
+        //var specFilter = _.bind(jasmineSpecFilter.specFilter, this);
+        var specFilter = jasmineSpecFilter.jasmineSpecFilter;
 
         jasmine.getEnv().specFilter = specFilter;
         jasmine.getEnv().addReporter( jasmineSpecFilter );

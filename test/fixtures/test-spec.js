@@ -3,7 +3,7 @@ describe('karma test', function () {
         expect(helloWorld()).toEqual('Hello world!');
     });
 
-    /** @issue 1 
+    /** @issue 1
      * @status open
      */
     it('should skip open issues', function () {
@@ -27,12 +27,14 @@ describe('other test', function () {
     describe('with nested describe', function () {
         /**
          * @release 1.1.1
+         * @status open
          */
         it('has one "it"', function () {
         })
 
         /**
          * @release 1.1.2
+         * @issue 1
          */
         it('has another "it"', function () {
         })
@@ -44,14 +46,36 @@ describe('other test', function () {
     describe('and another nested describe', function () {
         /**
          * @release 1.2.1
+         * @issue 1
          */
         it('also has one "it"', function () {
         })
 
         /**
          * @release 1.2.2
+         * @status open
          */
         it('also has another "it"', function () {
+        })
+    })
+})
+
+describe('specs without annotations', function () {
+    describe('at any level', function () {
+        it('should evaluate without annotations', function () {
+        })
+    })
+
+    /**
+     * @issue 1
+     */
+    describe('except here', function () {
+        describe('and with extra level', function () {
+            it('should evaluate with an issue annotation', function () {
+            })
+        })
+
+        it('should still evaluate with issue annotation', function () {
         })
     })
 })
