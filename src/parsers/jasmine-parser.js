@@ -107,7 +107,7 @@ exports.evaluateSpecAnnotations = function (file, specAnnotations) {
     var ANNOTATION_REGEXP = /@(issue|status|release) ([^@(*/)]*)/;
     var prevBlockLevel = 0;
 
-    parseSpecFile(input, [{path:'', annotations:{}}],
+    parseSpecFile(input, [],
         function (line, annotations) {
             var match = line.match(ANNOTATION_REGEXP);
             if (match) {
@@ -115,30 +115,13 @@ exports.evaluateSpecAnnotations = function (file, specAnnotations) {
             }
         },
         function (match, blockLevel, singleLineComment, annotations, output) {
-            var path = (output[blockLevel].path == '') ? match[3] :
-                                                        output[blockLevel].path + ' ' + match[3];
-
-
-            if( blockLevel < prevBlockLevel ) {
-                output[blockLevel].annotations = {};
-            }
-
-            console.info(prevBlockLevel, blockLevel, path);
-            console.info('saved annotations: ', output[blockLevel].annotations);
-            console.info('new annotations: ', annotations);
-
-            var evaluatedAnnotations = annotations ?
-                                        _.extend({}, output[blockLevel].annotations, annotations) :
-                                        output[blockLevel].annotations;
+            var path = blockLevel == 0 ? match[3] : output[blockLevel - 1] + ' ' + match[3];
 
             // Update the path and annotations for the caller
-            specAnnotations[path] = evaluatedAnnotations;
+            specAnnotations[path] = annotations;
 
             // update the internal graph
-            output[blockLevel + 1] = {
-               path: path,
-               annotations: evaluatedAnnotations
-            };
+            output[blockLevel] = path;
 
             prevBlockLevel = blockLevel;
             return output;
@@ -154,11 +137,7 @@ exports.evaluateSpecAnnotations = function (file, specAnnotations) {
  * @param {function(Array.<string>, number, boolean, string, string)} processSpecDeclaration
  */
 function parseSpecFile(input, output, parseCommentLine, processSpecDeclaration) {
-    //var ISSUE_REGEXP = /@issue ([^@(*/)]*)/;
-    //var GENERATED_REGEXP = / \* @(status|release) ([^@(*/)]*)/;
     var TEST_REGEXP = /(\s*)[fx]?(?:describe|it)\(\s*(?:"((?:[^"]|\")+)"|'((?:[^']|\')+)')/;
-    var OPEN_BLOCK_REGEXP = /{[^'"]*$/;
-    var CLOSE_BLOCK_REGEXP = /}[^'"]*$/;
     var inComment = false, singleLineComment,
         blockLevel = 0,
         start = 0, end,
@@ -211,11 +190,11 @@ function parseSpecFile(input, output, parseCommentLine, processSpecDeclaration) 
                 if (undefined == quote) {
                     if ('{' == c) {
                         blockLevel++;
-                        annotations[blockLevel] = _.extend(annotations[blockLevel - 1]);
+                        annotations[blockLevel] = _.extend({}, annotations[blockLevel - 1]);
                     } else if ('}' == c) {
-
+                        delete annotations[blockLevel];
                         blockLevel--;
-                        annotations[blockLevel] = {};
+                        annotations[blockLevel] = _.extend({}, annotations[blockLevel - 1]);
                     } else if (('"' == c || "'" == c) && i > 0 && line[i-1] != '\\') {
                         quote = c;
                     }

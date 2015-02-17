@@ -38,7 +38,9 @@ JasmineSpecFilter.prototype.specFilter = function (spec) {
     var annotations = this.specAnnotations[spec.result.fullName];
 
     console.info('specFilter for: ', spec.id, spec.result.fullName);
-    console.info(annotations);
+    if( annotations ) {
+        console.info(annotations);
+    }
 
     //runnableLookupTable[spec.id]
     //console.info(spec);
