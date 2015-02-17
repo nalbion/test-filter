@@ -20,7 +20,7 @@ var JasmineSpecFilter = function(options) {
 
     this.specDir = config.spec_dir || 'spec';
     this.specAnnotations = this.evaluateSpecAnnotations(config);
-}
+};
 
 /**
  * Called from Jasmine to check if each spec should be executed
