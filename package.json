@@ -16,7 +16,10 @@
     "issues"
   ],
   "author": "Nicholas Albion",
-  "main": "src/index.js",
+  "main": "lib/index.js",
+  "bin": {
+    "test-filter": "./bin/test-filter.js"
+  },
   "scripts": {
     "jasmine": "jasmine",
     "karma": "karma start",

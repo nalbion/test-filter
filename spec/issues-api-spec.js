@@ -1,5 +1,5 @@
-var issuesApiFactory = require('../src/issues/issues-api.js');
-var _github = require('../src/issues/github-api.js');
+var issuesApiFactory = require('../lib/issues/issues-api.js');
+var _github = require('../lib/issues/github-api.js');
 
 describe('Issues API', function () {
     describe('factory', function () {
@@ -40,6 +40,10 @@ describe('Issues API', function () {
 
     describe('GitHub', function () {
         describe('issues', function () {
+            /**
+             * @issue 8
+             * @status open
+             */
             it('should select the highest priority status', function () {
                 var issuesApi = issuesApiFactory.getIssuesApi(),
                     issues = {},

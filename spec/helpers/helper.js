@@ -1,8 +1,8 @@
 //jasmine.getEnv().specFilter = require('../../src/parsers/jasmine-parser.js').specFilter;
 
-var TestFilter = require('../../src/index.js');
-var testFilter = new TestFilter(require('../../package.json'));
-testFilter.createJasmineSpecFilter();
+//var TestFilter = require('../../lib/index.js');
+//var testFilter = new TestFilter(require('../../package.json'));
+//testFilter.createJasmineSpecFilter();
 
 //beforeAll(function (done) {
 //    console.info('Global beforeAll');
