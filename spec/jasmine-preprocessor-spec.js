@@ -14,7 +14,7 @@ xdescribe('skipped feature', function () {
 });
 
 describe('jasmine spec filter', function () {
-   fit('should evaluate spec annotations', function () {
+   it('should evaluate spec annotations', function () {
        var specAnnotations = {};
 
        jasmineParser.evaluateSpecAnnotations('test/fixtures/test-spec.js',
