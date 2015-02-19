@@ -67,9 +67,7 @@ describe('jasmine preprocessor', function () {
     });
 
     describe('spec parser', function () {
-        /** @issue 7 
-         * @status open
-         */
+        /** @issue 7 */
         it('should parse annotations in spec files', function () {
             var inlineJavaDoc = fs.readFileSync('test/fixtures/single-line-jasmine-comments-spec.js',
                                                 {encoding: 'utf8'});
@@ -98,10 +96,7 @@ describe('jasmine preprocessor', function () {
     });
 
     describe('JIRA integration', function () {
-        /** @issue 5 
-         * @status open
-         * @release 1.1.0
-         */
+        /** @issue 5 */
         it('should download issue data from the server', function () {
 
         });
@@ -127,9 +122,7 @@ describe('jasmine preprocessor', function () {
             });
         });
 
-        /** @issue 2 
-         * @status open
-         */
+        /** @issue 2 */
         it('should download issue data from the server', function () {
             expect(error).toBeNull();
             expect(issues).toBeDefined();
@@ -146,20 +139,14 @@ describe('jasmine preprocessor', function () {
         //    expect('this').not.toBe('executed until release 100.0.0');
         //});
 
-        /** @issue 6 
-         * @status open
-         * @release 1.2.0
-         */
+        /** @issue 6 */
         it('should support optional OAuth2 token/secret for private repos', function () {
 
         });
     });
 
     describe('command line options', function () {
-        /** @issue 3 
-         * @status open
-         * @release 100.0.0
-         */
+        /** @issue 3 */
         it('should skip test that do not match the "release" parameter', function () {
 
         });
@@ -168,9 +155,7 @@ describe('jasmine preprocessor', function () {
 
         });
 
-        /** @issue 4 
-         * @status open
-         */
+        /** @issue 4 */
         it('should skip tests that do not match the "status" parameter', function () {
 
         });

@@ -40,10 +40,7 @@ describe('Issues API', function () {
 
     describe('GitHub', function () {
         describe('issues', function () {
-            /**
-             * @issue 8
-             * @status open
-             */
+            /** @issue 8 */
             it('should select the highest priority status', function () {
                 var issuesApi = issuesApiFactory.getIssuesApi(),
                     issues = {},
