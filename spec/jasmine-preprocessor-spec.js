@@ -67,7 +67,9 @@ describe('jasmine preprocessor', function () {
     });
 
     describe('spec parser', function () {
-        /** @issue 7 */
+        /** @issue 7
+         * @status closed
+         */
         it('should parse annotations in spec files', function () {
             var inlineJavaDoc = fs.readFileSync('test/fixtures/single-line-jasmine-comments-spec.js',
                                                 {encoding: 'utf8'});
@@ -95,10 +97,13 @@ describe('jasmine preprocessor', function () {
         });
     });
 
+    /** @issue 5
+     * @status open
+     * @release 1.1.0
+     */
     describe('JIRA integration', function () {
-        /** @issue 5 */
         it('should download issue data from the server', function () {
-
+            expect('JIRA integration').toBe('implemented later, but tests to be skipped for now');
         });
     });
 
@@ -122,40 +127,64 @@ describe('jasmine preprocessor', function () {
             });
         });
 
-        /** @issue 2 */
+        /** @issue 2 
+         * @status closed
+         */
         it('should download issue data from the server', function () {
             expect(error).toBeNull();
             expect(issues).toBeDefined();
-            expect(_.keys(issues).length).toBeGreaterThan(5);
+            expect(_.keys(issues).length).toBeGreaterThan(0);
         });
 
-        ///** @ issue 1
-        //it('should skip open issues', function () {
-        //    expect('this test').toBe('skipped because "https://github.com/nalbion/test-filter/issues/1" is OPEN');
-        //});
+        /** @issue 1 
+         * @status open
+         */
+        it('should skip open issues', function () {
+            expect('this test').toBe('skipped because "https://github.com/nalbion/test-filter/issues/1" is OPEN');
+        });
 
-        ///** @ issue 3
-        //it('should skip tests linked to issues flagged for future releases', function () {
-        //    expect('this').not.toBe('executed until release 100.0.0');
-        //});
+        /** @issue 3 
+         * @status closed
+         * @release 100.0.0
+         */
+        it('should skip tests linked to issues flagged for future releases', function () {
+            expect('this').not.toBe('executed until release 100.0.0');
+        });
 
-        /** @issue 6 */
+        /**
+         * @status closed
+         */
         it('should support optional OAuth2 token/secret for private repos', function () {
 
         });
     });
 
-    describe('command line options', function () {
-        /** @issue 3 */
-        it('should skip test that do not match the "release" parameter', function () {
+    /**
+     * @is
+     * @status open
+     */
+    describe('status annotation with nested tests', function () {
+        it('should skip open issues', function () {
+            expect('this nested test').toBe('skipped because "https://github.com/nalbion/test-filter/issues/1" is OPEN');
+        });
+    });
 
+    describe('command line options', function () {
+        /** @issue 3 
+         * @status closed
+         * @release 100.0.0
+         */
+        it('should skip test that do not match the "release" parameter', function () {
+            expect('this test').toBe('skipped because "https://github.com/nalbion/test-filter/issues/3" is scheduled for a future release');
         });
 
         it('should skip tests that do not match the "issue" parameter', function () {
-
+            // usage: `test-filter jasmine issue=123`
         });
 
-        /** @issue 4 */
+        /** @issue 4 
+         * @status closed
+         */
         it('should skip tests that do not match the "status" parameter', function () {
 
         });

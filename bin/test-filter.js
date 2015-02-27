@@ -13,10 +13,13 @@ var path = require('path'),
 function runJasmineWithPreprocessorAndSpecFilter(args) {
     var Jasmine = require('../node_modules/jasmine/lib/jasmine.js'),
                   //  require('jasmine'),
-        jasmine = new Jasmine({ projectBaseDir: path.resolve() }),
+        projectBaseDir = path.resolve(),
+        jasmine = new Jasmine({ projectBaseDir: projectBaseDir }),
         command = new Command(path.resolve()),
+        projectPkg = require(projectBaseDir + '/package.json'),
+        release = projectPkg.version, issueNumber,
         offline = false,
-        preserveSpecs = false
+        preserveSpecs = false,
         options = {};
 
     args.forEach(function (arg) {
@@ -29,7 +32,13 @@ function runJasmineWithPreprocessorAndSpecFilter(args) {
             if (match) {
                 var key = match[1];
                 var value = match[2];
-                options[key] = value;
+                if ('release' === key) {
+                    release = value;
+                } else if ('issue' === key) {
+                    issueNumber = value;
+                } else {
+                    options[key] = value;
+                }
             }
         }
     });
@@ -39,7 +48,7 @@ function runJasmineWithPreprocessorAndSpecFilter(args) {
         /** @type {Promise} */
         issuesApi.getIssues().then(function (issues) {
             var JasmineSpecFilter = require('../lib/tools/jasmine/jasmine-spec-filter');
-            var jasmineSpecFilter = new JasmineSpecFilter(issues, preserveSpecs);
+            var jasmineSpecFilter = new JasmineSpecFilter(issues, preserveSpecs, release, issueNumber);
 
             // Swap in a customised loadSpecs() method
             var specAnnotations = {},
