@@ -31,7 +31,7 @@
     "url": "git://github.com/nalbion/test-filter.git"
   },
   "bugs": {
-    "url": "https://github.com/nalbion/test-filter/issues"
+    "url": "https://bitbucket.org/nalbion/test-filter/issues"
   },
   "devDependencies": {
     "gulp": "~3.8.10",

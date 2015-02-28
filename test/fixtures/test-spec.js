@@ -7,7 +7,7 @@ describe('karma test', function () {
      * @status open
      */
     it('should skip open issues', function () {
-        expect('this test').toBe('skipped because the issue is open');
+        expect('this test').toBe('skipped because issue #1 is open');
     });
 
     /** @release 100.0.0 */

@@ -19,7 +19,7 @@ module.exports = function(config) {
 //            // inlined plugins
 //            // {'framework:xyz', ['factory', factoryFn]},
 //            // require('./plugin-required-from-config')
-            {'preprocessor:test-filter': ['factory', require('./src/tools/karma/karma-test-filter-preprocessor')]}
+            {'preprocessor:test-filter': ['factory', require('./lib/tools/karma/karma-test-filter-preprocessor')]}
         ],
         preprocessors: {
             '**/*-spec.js': ['test-filter']
