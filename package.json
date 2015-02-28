@@ -13,6 +13,7 @@
     "cucumber",
     "jira",
     "github",
+    "bitbucket",
     "issues"
   ],
   "author": "Nicholas Albion",
@@ -21,7 +22,7 @@
     "test-filter": "./bin/test-filter.js"
   },
   "scripts": {
-    "jasmine": "jasmine",
+    "jasmine": "bin/test-filter.js jasmine",
     "karma": "karma start",
     "test": "gulp test"
   },
@@ -42,11 +43,11 @@
   "dependencies": {
     "jasmine": "~2.2.0",
     "github": "~0.2.3",
+    "bitbucket-api": "~0.0.7",
     "underscore": "~1.7.0",
     "app-root-path": "~1.0.0",
     "semver": "~4.2.2",
     "promised-io": "~0.3.4",
-    "event-queue": "~0.2.0",
     "path": "~0.11.14",
     "glob": "~4.3.5"
   }

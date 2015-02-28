@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+//#!/usr/bin/env node
 var path = require('path'),
     _ = require('underscore'),
     issuesApiFactory = require('../lib/issues/issues-api.js'),
