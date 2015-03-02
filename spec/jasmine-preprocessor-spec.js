@@ -128,7 +128,7 @@ describe('jasmine preprocessor', function () {
         });
 
         /** @issue 2 
-         * @status closed
+         * @status resolved
          */
         it('should download issue data from the server', function () {
             expect(error).toBeNull();
@@ -144,7 +144,7 @@ describe('jasmine preprocessor', function () {
         });
 
         /** @issue 3 
-         * @status closed
+         * @status resolved
          * @release 100.0.0
          */
         it('should skip tests linked to issues flagged for future releases', function () {
@@ -171,7 +171,7 @@ describe('jasmine preprocessor', function () {
 
     describe('command line options', function () {
         /** @issue 3 
-         * @status closed
+         * @status resolved
          * @release 100.0.0
          */
         it('should skip test that do not match the "release" parameter', function () {
