@@ -15,6 +15,9 @@ be interested in [cucumber-jira](https://github.com/nalbion/cucumber-jira) and
 [jira-maven-plugin](https://github.com/nalbion/jira-maven-plugin/tree/feature/generate-cucumber-features#generate-tests)'s `generate-tests` goal.
 
 ## Usage
+
+    npm install -g test-filter
+
 This module uses the `"bugs": {"url": "XXX"` value in your `package.json` file
 to determine how to connect to the issue management system.
 
