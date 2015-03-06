@@ -30,7 +30,7 @@ describe('jasmine spec filter', function () {
        expect(spec.release).toBe('100.0.0');
 
        spec = specAnnotations['other test'];
-       expect(spec.status).toBe('closed');
+       expect(spec.status).toBeUndefined();
        expect(spec.issue).toBeUndefined();
        expect(spec.release).toBe('1.0.0');
 
@@ -51,12 +51,12 @@ describe('jasmine spec filter', function () {
 
        spec = specAnnotations['specs without annotations except here and with extra level should evaluate with an issue annotation'];
        expect(spec.status).toBeUndefined();
-       expect(spec.issue).toBe('1');
+       expect(spec.issue).toBe('2');
        expect(spec.release).toBeUndefined();
 
        spec = specAnnotations['specs without annotations except here should still evaluate with issue annotation'];
        expect(spec.status).toBeUndefined();
-       expect(spec.issue).toBe('1');
+       expect(spec.issue).toBe('2');
        expect(spec.release).toBeUndefined();
    })
 });
@@ -128,7 +128,7 @@ describe('jasmine preprocessor', function () {
         });
 
         /** @issue 2 
-         * @status resolved
+         * @status closed
          */
         it('should download issue data from the server', function () {
             expect(error).toBeNull();
@@ -144,7 +144,7 @@ describe('jasmine preprocessor', function () {
         });
 
         /** @issue 3 
-         * @status resolved
+         * @status closed
          * @release 100.0.0
          */
         it('should skip tests linked to issues flagged for future releases', function () {
@@ -171,7 +171,7 @@ describe('jasmine preprocessor', function () {
 
     describe('command line options', function () {
         /** @issue 3 
-         * @status resolved
+         * @status closed
          * @release 100.0.0
          */
         it('should skip test that do not match the "release" parameter', function () {

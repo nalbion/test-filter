@@ -23,7 +23,7 @@
   },
   "scripts": {
     "jasmine": "bin/test-filter.js jasmine",
-    "karma": "karma start",
+    "karma": "bin/test-filter.js karma start",
     "test": "gulp test"
   },
   "repository": {

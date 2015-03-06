@@ -3,7 +3,8 @@ describe('karma test', function () {
         expect(helloWorld()).toEqual('Hello world!');
     });
 
-    /** @issue 1
+    /**
+     * @issue 1
      * @status open
      */
     it('should skip open issues', function () {
@@ -18,7 +19,6 @@ describe('karma test', function () {
 
 /**
  * @release 1.0.0
- * @status closed
  */
 describe('other test', function () {
     /**
@@ -67,7 +67,7 @@ describe('specs without annotations', function () {
     })
 
     /**
-     * @issue 1
+     * @issue 2
      */
     describe('except here', function () {
         describe('and with extra level', function () {
