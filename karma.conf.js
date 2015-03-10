@@ -13,23 +13,13 @@ module.exports = function(config) {
         ],
         plugins: [
             'karma-jasmine',
-            //'karma-chrome-launcher'
             'karma-phantomjs-launcher',
 
-//            // inlined plugins
-//            // {'framework:xyz', ['factory', factoryFn]},
-//            // require('./plugin-required-from-config')
             {'preprocessor:test-filter': ['factory', require('./lib/tools/karma/karma-test-filter-preprocessor')]}
         ],
         preprocessors: {
             '**/*-spec.js': ['test-filter']
         }
-//        customPreprocessors: {
-//            test_filter: {
-////              base: 'coffee',
-////              options: {bare: true}
-//            }
-//        }
         ,testFilter: {
             modifyTestFiles: false
         }
