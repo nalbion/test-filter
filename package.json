@@ -10,6 +10,8 @@
     "protractor",
     "karma-plugin",
     "karma-preprocessor",
+    "protractor",
+    "gulpplugin",
     "cucumber",
     "jira",
     "github",
@@ -49,6 +51,8 @@
     "semver": "~4.2.2",
     "promised-io": "~0.3.4",
     "path": "~0.11.14",
-    "glob": "~4.3.5"
+    "glob": "~4.3.5",
+    "through2": "~0.6.3",
+    "gulp-util": "~3.0.4"
   }
 }

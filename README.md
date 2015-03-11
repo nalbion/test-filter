@@ -1,4 +1,4 @@
-# test-filter
+# test-filter [![NPM version][npm-image]][npm-url]
 Filter which tests are executed by integrating issue management systems.
 Uses javadoc-style annotations to associate tests/specs with issues and their current status and target release/milestone.
 
@@ -16,7 +16,7 @@ be interested in [cucumber-jira](https://github.com/nalbion/cucumber-jira) and
 
 ## Usage
 
-    npm install -g test-filter
+    npm install --save-dev test-filter
 
 This module uses the `"bugs": {"url": "XXX"` value in your `package.json` file
 to determine how to connect to the issue management system.
