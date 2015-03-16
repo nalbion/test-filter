@@ -1,4 +1,4 @@
-# test-filter [![NPM version][npm-image]][npm-url]
+# test-filter
 Filter which tests are executed by integrating issue management systems.
 Uses javadoc-style annotations to associate tests/specs with issues and their current status and target release/milestone.
 
