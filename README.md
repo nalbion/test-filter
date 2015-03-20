@@ -80,9 +80,18 @@ For details on the [optional arguments](#Optional%20Arguments) see below.
  - `host=issues.domain.com` and `pathPrefix=prefix` - Only required for GitHub Enterprise
 
 #### BitBucket
-When connecting to BitBucket, you must provide your BitBucket username & password on the command line:
+When connecting to BitBucket, you must provide your BitBucket username & password:
+
+on the command line:
 
     test-filter jasmine username=someone password=secret
+
+...or in `~/.netrc`:
+
+    machine bitbucket.org
+      login yourusername
+      password yourpassword
+
 
 #### JIRA
 Not yet implemented
