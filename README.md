@@ -21,6 +21,30 @@ be interested in [cucumber-jira](https://github.com/nalbion/cucumber-jira) and
 This module uses the `"bugs": {"url": "XXX"` value in your `package.json` file
 to determine how to connect to the issue management system.
 
+### Protractor
+Note: Requires *protractor 1.7.0* or greater.
+
+#### protractor.conf.js
+
+    exports.config = {
+      ...
+      framework: 'custom',
+      frameworkPath: '../../node_modules/test-filter/lib/tools/protractor-jasmine.js',
+      ...
+      testFilterOptions: {
+        // See the Optional Arguments section below
+      },
+      ...
+      onPrepare: function() {
+        var JasmineSpecFilter = require('test-filter/lib/tools/jasmine/jasmine-spec-filter'),
+            issues = null,
+            jasmineSpecFilter = new JasmineSpecFilter(issues, testFilterOptions);
+
+        jasmine.getEnv().specFilter = jasmineSpecFilter.jasmineSpecFilter;
+      }
+      ...
+    }
+
 ### Jasmine
 Test Filter can be used as a Jasmine wrapper:
 
